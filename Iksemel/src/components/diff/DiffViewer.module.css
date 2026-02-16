@@ -1,0 +1,286 @@
+/* DiffViewer — Configuration change diff viewer */
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+/* ─── Summary bar ──────────────────────────────────────────────────────── */
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+.summaryAdded {
+  color: var(--color-diff-added-fg);
+}
+
+.summaryRemoved {
+  color: var(--color-diff-removed-fg);
+}
+
+.summaryModified {
+  color: var(--color-diff-changed-fg);
+}
+
+/* ─── Change list ──────────────────────────────────────────────────────── */
+
+.changeList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-6);
+}
+
+/* ─── Category group ───────────────────────────────────────────────────── */
+
+.categoryGroup {
+  margin-bottom: var(--space-4);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-family-sans);
+}
+
+.categoryHeader:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+.categoryChevron {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-ghost);
+  transition: transform var(--transition-fast);
+  width: 10px;
+  text-align: center;
+}
+
+.categoryChevronOpen {
+  composes: categoryChevron;
+  transform: rotate(90deg);
+}
+
+.categoryLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+}
+
+.categoryCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-ghost);
+}
+
+/* ─── Change item ──────────────────────────────────────────────────────── */
+
+.changeItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.changeItem:focus-within {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 1px;
+}
+
+.changeItemFocused {
+  composes: changeItem;
+  border-color: var(--color-border-focus);
+}
+
+.changeItemAdded {
+  background: var(--color-diff-added-bg);
+  border-color: var(--color-diff-added-border);
+}
+
+.changeItemRemoved {
+  background: var(--color-diff-removed-bg);
+  border-color: var(--color-diff-removed-border);
+}
+
+.changeItemModified {
+  background: var(--color-diff-changed-bg);
+  border-color: var(--color-diff-changed-border);
+}
+
+/* ─── Change type icon ─────────────────────────────────────────────────── */
+
+.changeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.changeIconAdded {
+  composes: changeIcon;
+  background: var(--color-diff-added-highlight);
+  color: var(--color-diff-added-fg);
+}
+
+.changeIconRemoved {
+  composes: changeIcon;
+  background: var(--color-diff-removed-highlight);
+  color: var(--color-diff-removed-fg);
+}
+
+.changeIconModified {
+  composes: changeIcon;
+  background: var(--color-diff-changed-highlight);
+  color: var(--color-diff-changed-fg);
+}
+
+/* ─── Change content ───────────────────────────────────────────────────── */
+
+.changeContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.changeLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.changeValues {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-muted);
+}
+
+.oldValue {
+  text-decoration: line-through;
+  color: var(--color-diff-removed-fg);
+  opacity: 0.8;
+}
+
+.arrow {
+  color: var(--color-text-ghost);
+  flex-shrink: 0;
+}
+
+.newValue {
+  color: var(--color-diff-added-fg);
+}
+
+/* ─── Accept button per change ─────────────────────────────────────────── */
+
+.acceptBtn {
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent-green-border);
+  background: var(--color-accent-green-bg);
+  color: var(--color-accent-green);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  line-height: 1.8;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.acceptBtn:hover {
+  background: var(--color-accent-green);
+  color: var(--color-bg-primary);
+}
+
+.acceptBtn:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 1px;
+}
+
+/* ─── Category badge in change item ────────────────────────────────────── */
+
+.changeCategoryBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-ghost);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.6;
+  text-transform: capitalize;
+  flex-shrink: 0;
+}
+
+/* ─── Empty / identical state ──────────────────────────────────────────── */
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--color-text-disabled);
+  font-size: var(--font-size-sm);
+  padding: var(--space-8);
+}

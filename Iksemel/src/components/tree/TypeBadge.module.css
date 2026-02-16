@@ -1,0 +1,49 @@
+/**
+ * TypeBadge — colour-coded XSD type label.
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+/* ─── Type colour groups ────────────────────────────────────────── */
+
+.string {
+  color: var(--color-type-string-fg);
+  background: var(--color-type-string-bg);
+  border-color: var(--color-type-string-border);
+}
+
+.datetime {
+  color: var(--color-type-datetime-fg);
+  background: var(--color-type-datetime-bg);
+  border-color: var(--color-type-datetime-border);
+}
+
+.numeric {
+  color: var(--color-type-integer-fg);
+  background: var(--color-type-integer-bg);
+  border-color: var(--color-type-integer-border);
+}
+
+.boolean {
+  color: var(--color-type-boolean-fg);
+  background: var(--color-type-boolean-bg);
+  border-color: var(--color-type-boolean-border);
+}
+
+.complex {
+  color: var(--color-type-complex-fg);
+  background: var(--color-type-complex-bg);
+  border-color: var(--color-type-complex-border);
+}

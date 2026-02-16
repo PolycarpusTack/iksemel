@@ -1,0 +1,71 @@
+/* TabContainer — WAI-ARIA compliant tab panel */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tablist {
+  display: flex;
+  gap: var(--space-0);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tablist::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  position: relative;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  font-family: var(--font-family-sans);
+}
+
+.tab:hover {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-tertiary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: -2px;
+  z-index: var(--z-dropdown);
+}
+
+.tabActive {
+  color: var(--color-accent-green);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tabActive::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 2px;
+  background: var(--color-accent-green);
+  border-radius: var(--radius-full);
+  transition: opacity var(--transition-fast);
+}
+
+.panel {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-bg-primary);
+}

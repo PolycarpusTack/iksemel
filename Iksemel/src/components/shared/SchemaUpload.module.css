@@ -1,0 +1,165 @@
+/**
+ * SchemaUpload — dark-themed schema upload panel with three input modes.
+ */
+
+/* ─── Full panel layout ────────────────────────────────────────────── */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-9);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.heading {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: var(--space-0);
+}
+
+.sectionLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+/* ─── Drop zone ────────────────────────────────────────────────────── */
+
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-11);
+  border: 2px dashed var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-primary);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.dropZone:hover {
+  border-color: var(--color-border-focus);
+  background: var(--color-bg-tertiary);
+}
+
+.dropZoneActive {
+  border-color: var(--color-accent-green);
+  background: var(--color-accent-green-bg);
+}
+
+.dropIcon {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-faint);
+  transition: color var(--transition-fast);
+}
+
+.dropZoneActive .dropIcon {
+  color: var(--color-accent-green);
+}
+
+.dropText {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+}
+
+.dropZoneActive .dropText {
+  color: var(--color-accent-green);
+}
+
+.browseHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-faint);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* ─── Divider ──────────────────────────────────────────────────────── */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-primary);
+}
+
+.dividerText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Paste section ────────────────────────────────────────────────── */
+
+.pasteSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pasteActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ─── Demo section ─────────────────────────────────────────────────── */
+
+.demoSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.demoHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-faint);
+}
+
+/* ─── Compact strip (hasSchema === true) ───────────────────────────── */
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+}
+
+.stripLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-faint);
+  margin-right: auto;
+}
+
+/* ─── Error display ────────────────────────────────────────────────── */
+
+.error {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-red);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-accent-red-bg);
+  border: 1px solid var(--color-accent-red-border);
+  border-radius: var(--radius-sm);
+}

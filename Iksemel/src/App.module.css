@@ -1,0 +1,182 @@
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-sans);
+}
+
+.header {
+  padding: var(--space-5) var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-ghost);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Upload screen (no schema loaded) */
+.uploadContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+}
+
+/* Split panel layout */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.resizeHandle {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+  position: relative;
+  z-index: 1;
+  margin-left: -2px;
+  margin-right: -2px;
+}
+
+.resizeHandle:hover,
+.resizeHandle:active {
+  background: var(--color-accent-green);
+}
+
+.treeContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.rightPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.designTab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  overflow-y: auto;
+}
+
+.guideContent {
+  padding: var(--space-8);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.guideContent h2 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-6);
+}
+
+.guideContent ol {
+  padding-left: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.guideContent li {
+  color: var(--color-text-secondary);
+}
+
+.guideContent strong {
+  color: var(--color-accent-green);
+}
+
+.embeddedWaiting {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  text-align: center;
+}
+
+.guideIntro {
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+}
+
+.guideContent h3 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.guideCode {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-green);
+  overflow-x: auto;
+  line-height: 1.8;
+}
+
+/* Diff overlay */
+.diffOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diffModal {
+  width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}

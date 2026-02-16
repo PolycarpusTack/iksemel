@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample XML data for testing the XFEB two-stage pipeline.
+  Run this through any of the sample XSLT stylesheets with Saxon
+  to produce an XML fragment for Stage 2 post-processing.
+
+  Usage (Saxon):
+    java -jar saxon-he.jar -s:sample-data.xml -xsl:sample-xlsx-native.xslt -o:fragment.xml
+-->
+<BroadcastExport>
+  <Programmes>
+    <Programme>
+      <Title>Morning News</Title>
+      <Channel>BBC One</Channel>
+      <SlotDate>2026-02-16</SlotDate>
+      <StartTime>06:00</StartTime>
+      <Duration>120</Duration>
+      <Genre>News</Genre>
+    </Programme>
+    <Programme>
+      <Title>Breakfast Show</Title>
+      <Channel>BBC One</Channel>
+      <SlotDate>2026-02-16</SlotDate>
+      <StartTime>08:00</StartTime>
+      <Duration>60</Duration>
+      <Genre>Entertainment</Genre>
+    </Programme>
+    <Programme>
+      <Title>Documentary Hour</Title>
+      <Channel>BBC Two</Channel>
+      <SlotDate>2026-02-16</SlotDate>
+      <StartTime>09:00</StartTime>
+      <Duration>60</Duration>
+      <Genre>Documentary</Genre>
+    </Programme>
+    <Programme>
+      <Title>Comedy Special</Title>
+      <Channel>ITV</Channel>
+      <SlotDate>2026-02-16</SlotDate>
+      <StartTime>21:00</StartTime>
+      <Duration>45</Duration>
+      <Genre>Comedy</Genre>
+    </Programme>
+    <Programme>
+      <Title>Evening Film</Title>
+      <Channel>Channel 4</Channel>
+      <SlotDate>2026-02-16</SlotDate>
+      <StartTime>21:00</StartTime>
+      <Duration>120</Duration>
+      <Genre>Film</Genre>
+    </Programme>
+  </Programmes>
+</BroadcastExport>

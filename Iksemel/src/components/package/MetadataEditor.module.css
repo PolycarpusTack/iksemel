@@ -1,0 +1,105 @@
+/* MetadataEditor — Report metadata form */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sectionLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fieldLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
+.required::after {
+  content: " *";
+  color: var(--color-accent-red);
+}
+
+.errorInput {
+  border-color: var(--color-accent-red) !important;
+}
+
+.errorMessage {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-red);
+  margin-top: var(--space-1);
+}
+
+.warningMessage {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-yellow);
+  margin-top: var(--space-1);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* Tags */
+.tagsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-accent-green-bg);
+  border: 1px solid var(--color-accent-green-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-green);
+}
+
+.tagDismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-accent-green);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  padding: 0;
+  transition: background var(--transition-fast);
+}
+
+.tagDismiss:hover {
+  background: var(--color-accent-green-border);
+}
+
+.tagHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+}

@@ -1,0 +1,167 @@
+/**
+ * XFEB Design Tokens
+ *
+ * All visual values used across the application are defined here.
+ * Components reference these via CSS custom properties — no hardcoded
+ * colours, font sizes, or spacing in component files.
+ */
+
+:root {
+  /* ─── Colour: Base ──────────────────────────────────────────────── */
+  --color-bg-primary: #0D1B2A;
+  --color-bg-secondary: #111318;
+  --color-bg-tertiary: #1A1D24;
+  --color-bg-elevated: #1B263B;
+  --color-bg-hover: #1B263B;
+  --color-bg-surface: #111318;
+
+  /* ─── Colour: Border ────────────────────────────────────────────── */
+  --color-border-primary: #252932;
+  --color-border-secondary: #1A1D24;
+  --color-border-subtle: #1B263B;
+  --color-border-focus: #1B9AAA;
+
+  /* ─── Colour: Text ──────────────────────────────────────────────── */
+  --color-text-primary: #E5E7EB;
+  --color-text-secondary: #D1D5DB;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-muted: #6B7280;
+  --color-text-faint: #6B7280;
+  --color-text-ghost: #4A5163;
+  --color-text-disabled: #363B47;
+  --color-text-dimmed: #252932;
+
+  /* ─── Colour: Accent ────────────────────────────────────────────── */
+  --color-accent-green: #2EC4B6;
+  --color-accent-green-dim: #1B9AAA;
+  --color-accent-yellow: #F4A261;
+  --color-accent-red: #EF4444;
+  --color-accent-blue: #3B82F6;
+  --color-accent-purple: #F4A261;
+
+  /* ─── Colour: Accent backgrounds ────────────────────────────────── */
+  --color-accent-green-bg: rgba(27, 154, 170, 0.12);
+  --color-accent-green-border: rgba(27, 154, 170, 0.3);
+  --color-accent-yellow-bg: rgba(244, 162, 97, 0.12);
+  --color-accent-yellow-border: rgba(244, 162, 97, 0.3);
+  --color-accent-red-bg: rgba(239, 68, 68, 0.12);
+  --color-accent-red-border: rgba(239, 68, 68, 0.3);
+  --color-accent-blue-bg: rgba(59, 130, 246, 0.12);
+  --color-accent-blue-border: rgba(59, 130, 246, 0.3);
+  --color-accent-purple-bg: rgba(244, 162, 97, 0.12);
+  --color-accent-purple-border: rgba(244, 162, 97, 0.3);
+
+  /* ─── Colour: Type badges ───────────────────────────────────────── */
+  --color-type-string-bg: rgba(16, 185, 129, 0.12);
+  --color-type-string-fg: #34D399;
+  --color-type-string-border: rgba(16, 185, 129, 0.3);
+  --color-type-datetime-bg: rgba(59, 130, 246, 0.12);
+  --color-type-datetime-fg: #60A5FA;
+  --color-type-datetime-border: rgba(59, 130, 246, 0.3);
+  --color-type-duration-bg: rgba(27, 154, 170, 0.12);
+  --color-type-duration-fg: #5DD9C9;
+  --color-type-duration-border: rgba(27, 154, 170, 0.3);
+  --color-type-integer-bg: rgba(244, 162, 97, 0.12);
+  --color-type-integer-fg: #F6B47D;
+  --color-type-integer-border: rgba(244, 162, 97, 0.3);
+  --color-type-boolean-bg: rgba(239, 68, 68, 0.12);
+  --color-type-boolean-fg: #F87171;
+  --color-type-boolean-border: rgba(239, 68, 68, 0.3);
+  --color-type-complex-bg: #252932;
+  --color-type-complex-fg: #9CA3AF;
+  --color-type-complex-border: #363B47;
+
+  /* ─── Colour: Checkbox states ───────────────────────────────────── */
+  --color-checkbox-checked: #2EC4B6;
+  --color-checkbox-partial: #F4A261;
+  --color-checkbox-unchecked: #4A5163;
+  --color-checkbox-partial-bg: rgba(244, 162, 97, 0.19);
+
+  /* ─── Colour: Diff viewer ───────────────────────────────────────── */
+  --color-diff-added-fg: #2EC4B6;
+  --color-diff-added-bg: rgba(27, 154, 170, 0.1);
+  --color-diff-added-border: rgba(27, 154, 170, 0.4);
+  --color-diff-added-highlight: rgba(27, 154, 170, 0.2);
+  --color-diff-removed-fg: #EF4444;
+  --color-diff-removed-bg: rgba(239, 68, 68, 0.1);
+  --color-diff-removed-border: rgba(239, 68, 68, 0.4);
+  --color-diff-removed-highlight: rgba(239, 68, 68, 0.2);
+  --color-diff-changed-fg: #FBBF24;
+  --color-diff-changed-bg: rgba(251, 191, 36, 0.1);
+  --color-diff-changed-border: rgba(251, 191, 36, 0.4);
+  --color-diff-changed-highlight: rgba(251, 191, 36, 0.2);
+
+  /* ─── Typography ────────────────────────────────────────────────── */
+  --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-base: 12px;
+  --font-size-md: 13px;
+  --font-size-lg: 14px;
+  --font-size-xl: 15px;
+  --font-size-2xl: 16px;
+  --font-size-3xl: 18px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* ─── Spacing ───────────────────────────────────────────────────── */
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 20px;
+  --space-10: 24px;
+  --space-11: 32px;
+  --space-12: 40px;
+
+  /* ─── Border radius ─────────────────────────────────────────────── */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 5px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ───────────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow-green: 0 2px 12px rgba(27, 154, 170, 0.3);
+  --shadow-glow-amber: 0 2px 12px rgba(244, 162, 97, 0.3);
+
+  /* ─── Transitions ───────────────────────────────────────────────── */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.15s ease;
+  --transition-slow: 0.3s ease;
+
+  /* ─── Z-index layers ────────────────────────────────────────────── */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 50;
+  --z-tooltip: 100;
+  --z-modal: 200;
+}
+
+/**
+ * Reduced motion preferences.
+ * Disables animations and transitions when the user prefers reduced motion.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0s;
+    --transition-normal: 0s;
+    --transition-slow: 0s;
+  }
+}

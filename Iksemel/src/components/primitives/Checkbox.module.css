@@ -1,0 +1,45 @@
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  border: 2px solid var(--color-checkbox-unchecked);
+  background: transparent;
+  transition: all var(--transition-normal);
+  padding: 0;
+}
+
+.checkbox:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 1px;
+}
+
+/* State: checked */
+.checked {
+  border-color: var(--color-checkbox-checked);
+  background: var(--color-checkbox-checked);
+}
+
+/* State: partial (indeterminate) */
+.partial {
+  border-color: var(--color-checkbox-partial);
+  background: var(--color-checkbox-partial-bg);
+}
+
+/* State: unchecked — uses default styles */
+
+/* Indicator shapes — differentiated by shape, not just colour */
+.checkmark {
+  display: block;
+}
+
+.dash {
+  width: 7px;
+  height: 2px;
+  background: var(--color-checkbox-partial);
+  border-radius: 1px;
+}
