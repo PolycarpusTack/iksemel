@@ -1,4 +1,4 @@
-import { bridgeWarn } from "./log";
+import { bridgeSecurityWarn } from "./log";
 
 /**
  * Origin validation for the PostMessage bridge.
@@ -67,7 +67,7 @@ export function createOriginValidator(
       // Wildcard allows everything (dev mode only)
       if (origins.has("*")) {
         if (!wildcardWarned) {
-          bridgeWarn(
+          bridgeSecurityWarn(
             "[XFEB Bridge] Wildcard origin '*' is active — all origins are allowed. " +
               "This should only be used during development.",
           );

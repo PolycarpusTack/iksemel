@@ -15,3 +15,8 @@ export function bridgeWarn(message: string, ...args: readonly unknown[]): void {
   }
   console.warn(message, ...args);
 }
+
+/** Security-relevant warnings that must be emitted in all environments. */
+export function bridgeSecurityWarn(message: string, ...args: readonly unknown[]): void {
+  console.warn(message, ...args);
+}
