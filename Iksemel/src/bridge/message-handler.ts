@@ -240,6 +240,13 @@ export function createBridge(config: BridgeConfig): Bridge {
       );
       return;
     }
+    if (lastKnownOrigin === null && message.type !== "XFEB_READY") {
+      bridgeDebug(
+        "[XFEB Bridge] Dropping outbound message — host origin not yet known",
+        message.type,
+      );
+      return;
+    }
     const targetOrigin = lastKnownOrigin ?? "*";
     target.postMessage(message, targetOrigin);
   }
