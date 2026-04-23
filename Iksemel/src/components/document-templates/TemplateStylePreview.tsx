@@ -7,11 +7,10 @@
  */
 
 import type { ReactNode } from "react";
-import { useAppState } from "@/state/app-state";
+import { useAppSelector } from "@/state";
 
 export function TemplateStylePreview(): ReactNode {
-  const state = useAppState();
-  const template = state.documentTemplate;
+  const template = useAppSelector((state) => state.documentTemplate);
 
   if (!template?.extractedStyles) {
     return null;

@@ -135,7 +135,7 @@ function applyFieldChange(
   if (shouldSelect) {
     updated[fieldKey] = true;
   } else {
-    delete updated[fieldKey];
+    Reflect.deleteProperty(updated, fieldKey);
   }
 
   return { ...snapshot, selection: updated as SelectionState };
@@ -155,7 +155,7 @@ function applyFieldFromTarget(
   if (targetSelected) {
     updated[fieldKey] = true;
   } else {
-    delete updated[fieldKey];
+    Reflect.deleteProperty(updated, fieldKey);
   }
 
   return { ...current, selection: updated as SelectionState };

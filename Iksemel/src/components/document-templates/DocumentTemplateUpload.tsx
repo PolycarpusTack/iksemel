@@ -7,15 +7,15 @@
  */
 
 import { useCallback, useRef, useState, type DragEvent, type ReactNode } from "react";
-import { useAppState, useAppDispatch } from "@/state/app-state";
+import { useAppSelector, useAppDispatch } from "@/state";
 import { extractDocumentTemplate } from "@engine/document-templates";
 
 const ACCEPTED_EXTENSIONS = [".xlsx", ".docx", ".pptx", ".ods", ".odt"];
 const ACCEPT_STRING = ACCEPTED_EXTENSIONS.join(",");
 
 export function DocumentTemplateUpload(): ReactNode {
-  const state = useAppState();
   const dispatch = useAppDispatch();
+  const template = useAppSelector((state) => state.documentTemplate);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,8 +64,6 @@ export function DocumentTemplateUpload(): ReactNode {
   const handleClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
-
-  const template = state.documentTemplate;
 
   if (template) {
     return (

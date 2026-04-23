@@ -187,7 +187,9 @@ describe("Template Serializer", () => {
     it("serializeTemplate() produces valid JSON", () => {
       const tpl = STANDARD_TEMPLATES[0]!;
       const json = serializeTemplate(tpl);
-      expect(() => JSON.parse(json)).not.toThrow();
+      expect(() => {
+        JSON.parse(json);
+      }).not.toThrow();
     });
 
     it("deserializeTemplate() round-trips correctly", () => {

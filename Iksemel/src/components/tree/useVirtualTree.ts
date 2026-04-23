@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type { FlatTreeNode } from "./flattenTree";
 
 /**
@@ -31,6 +31,42 @@ export interface VirtualTreeResult {
 
 const DEFAULT_OVERSCAN = 20;
 
+interface VirtualRange {
+  readonly startIdx: number;
+  readonly endIdx: number;
+}
+
+interface ComputeVirtualRangeInput {
+  readonly itemCount: number;
+  readonly rowHeight: number;
+  readonly scrollTop: number;
+  readonly containerHeight: number;
+  readonly overscan: number;
+}
+
+export function computeVirtualRange(input: ComputeVirtualRangeInput): VirtualRange {
+  const {
+    itemCount,
+    rowHeight,
+    scrollTop,
+    containerHeight,
+    overscan,
+  } = input;
+
+  if (itemCount <= 0 || rowHeight <= 0) {
+    return { startIdx: 0, endIdx: 0 };
+  }
+
+  const startIdx = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
+  const visibleCount = Math.ceil(Math.max(0, containerHeight) / rowHeight);
+  const endIdx = Math.min(
+    itemCount,
+    Math.floor(scrollTop / rowHeight) + visibleCount + overscan,
+  );
+
+  return { startIdx, endIdx };
+}
+
 /**
  * Custom hook that virtualises tree rendering.
  *
@@ -47,8 +83,26 @@ export function useVirtualTree({
   containerRef,
   overscan = DEFAULT_OVERSCAN,
 }: VirtualTreeOptions): VirtualTreeResult {
-  const [scrollTop, setScrollTop] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
+  const [range, setRange] = useState<VirtualRange>({ startIdx: 0, endIdx: 0 });
+  const rafRef = useRef<number | null>(null);
+  const scrollTopRef = useRef(0);
+  const containerHeightRef = useRef(0);
+
+  const updateRange = useCallback((scrollTop: number, containerHeight: number) => {
+    const next = computeVirtualRange({
+      itemCount: flatNodes.length,
+      rowHeight,
+      scrollTop,
+      containerHeight,
+      overscan,
+    });
+
+    setRange((prev) => (
+      prev.startIdx === next.startIdx && prev.endIdx === next.endIdx
+        ? prev
+        : next
+    ));
+  }, [flatNodes.length, overscan, rowHeight]);
 
   // Observe container size changes so we recalculate when the panel resizes.
   useEffect(() => {
@@ -56,12 +110,14 @@ export function useVirtualTree({
     if (!el) return;
 
     // Set initial height.
-    setContainerHeight(el.clientHeight);
+    containerHeightRef.current = el.clientHeight;
+    updateRange(scrollTopRef.current, containerHeightRef.current);
 
     // Use ResizeObserver to track container size changes.
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerHeight(entry.contentRect.height);
+        containerHeightRef.current = entry.contentRect.height;
+        updateRange(scrollTopRef.current, containerHeightRef.current);
       }
     });
     observer.observe(el);
@@ -69,34 +125,44 @@ export function useVirtualTree({
     return () => {
       observer.disconnect();
     };
-  }, [containerRef]);
+  }, [containerRef, updateRange]);
+
+  useEffect(() => {
+    updateRange(scrollTopRef.current, containerHeightRef.current);
+  }, [updateRange]);
+
+  useEffect(() => () => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
 
   // Scroll handler using requestAnimationFrame for smooth updates.
   const onScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
       const target = e.currentTarget;
-      requestAnimationFrame(() => {
-        setScrollTop(target.scrollTop);
+      scrollTopRef.current = target.scrollTop;
+
+      if (rafRef.current !== null) {
+        return;
+      }
+
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        updateRange(scrollTopRef.current, target.clientHeight);
       });
     },
-    [],
+    [updateRange],
   );
 
   // Calculate the visible window of nodes.
   const totalHeight = flatNodes.length * rowHeight;
-
-  // The first node index whose top edge is at or above the scroll position.
-  const startIdx = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
-
-  // The last node index whose top edge is within the viewport.
-  const visibleCount = Math.ceil(containerHeight / rowHeight);
-  const endIdx = Math.min(
-    flatNodes.length,
-    Math.floor(scrollTop / rowHeight) + visibleCount + overscan,
+  const visibleNodes = useMemo(
+    () => flatNodes.slice(range.startIdx, range.endIdx),
+    [flatNodes, range.endIdx, range.startIdx],
   );
-
-  const visibleNodes = flatNodes.slice(startIdx, endIdx);
-  const offsetY = startIdx * rowHeight;
+  const offsetY = range.startIdx * rowHeight;
 
   return {
     visibleNodes,

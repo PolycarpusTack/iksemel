@@ -10,6 +10,39 @@ export interface FlatTreeNode {
   readonly isExpanded: boolean;
 }
 
+interface SearchIndexEntry {
+  readonly text: string;
+  readonly typeName: string;
+  readonly isSimple: boolean;
+}
+
+export interface TreeSearchIndex {
+  readonly entries: ReadonlyMap<string, SearchIndexEntry>;
+  readonly parentById: ReadonlyMap<string, string | null>;
+}
+
+export function buildTreeSearchIndex(roots: readonly SchemaNode[]): TreeSearchIndex {
+  const entries = new Map<string, SearchIndexEntry>();
+  const parentById = new Map<string, string | null>();
+
+  const walkIndex = (nodes: readonly SchemaNode[], parentId: string | null): void => {
+    for (const node of nodes) {
+      entries.set(node.id, {
+        text: `${node.name} ${node.documentation}`.toLowerCase(),
+        typeName: node.typeName.toLowerCase(),
+        isSimple: node.type === "simple" || node.isAttribute === true,
+      });
+      parentById.set(node.id, parentId);
+      if (node.children.length > 0) {
+        walkIndex(node.children, node.id);
+      }
+    }
+  };
+
+  walkIndex(roots, null);
+  return { entries, parentById };
+}
+
 /**
  * Flattens a schema tree into a flat list of visible nodes.
  * Only includes children of expanded nodes. When a search query is active,
@@ -27,13 +60,16 @@ export function flattenTree(
   expansion: ExpansionState,
   searchQuery: string,
   typeFilter?: string | null,
+  searchIndex?: TreeSearchIndex,
 ): readonly FlatTreeNode[] {
   const query = searchQuery.trim().toLowerCase();
   const type = typeFilter?.toLowerCase() ?? null;
 
   // When searching or type-filtering, pre-compute the set of node IDs that should be visible.
   // A node is visible if it matches OR any of its descendants match.
-  const visibleIds = (query || type) ? buildVisibleSet(roots, query, type) : null;
+  const visibleIds = (query || type)
+    ? buildVisibleSet(query, type, searchIndex ?? buildTreeSearchIndex(roots))
+    : null;
 
   const result: FlatTreeNode[] = [];
   walk(roots, 0, result, expansion, visibleIds);
@@ -45,33 +81,27 @@ export function flattenTree(
  * A node is included if its name or documentation matches the query,
  * or if any descendant matches (ancestor visibility).
  */
-function buildVisibleSet(
-  roots: readonly SchemaNode[],
-  query: string,
-  typeFilter: string | null,
-): Set<string> {
+function buildVisibleSet(query: string, typeFilter: string | null, searchIndex: TreeSearchIndex): Set<string> {
   const ids = new Set<string>();
+  const { entries, parentById } = searchIndex;
 
-  function walkInner(nodes: readonly SchemaNode[]): boolean {
-    let anyMatch = false;
-    for (const node of nodes) {
-      const nameMatch = query ? node.name.toLowerCase().includes(query) || node.documentation.toLowerCase().includes(query) : true;
-      const typeMatch = typeFilter ? node.typeName.toLowerCase().includes(typeFilter) : true;
-      const directMatch = nameMatch && typeMatch;
-      // For type filter: only leaf/simple nodes can match the type directly;
-      // complex parents match if any child matches
-      const selfMatch = typeFilter ? (node.type === "simple" || node.isAttribute ? directMatch : false) : directMatch;
-      const childMatch = node.children.length > 0 && walkInner(node.children);
-
-      if (selfMatch || childMatch) {
-        ids.add(node.id);
-        anyMatch = true;
-      }
+  const addWithAncestors = (nodeId: string): void => {
+    let current: string | null = nodeId;
+    while (current !== null) {
+      ids.add(current);
+      current = parentById.get(current) ?? null;
     }
-    return anyMatch;
+  };
+
+  for (const [nodeId, entry] of entries) {
+    const queryMatch = query ? entry.text.includes(query) : true;
+    const typeMatch = typeFilter ? entry.typeName.includes(typeFilter) : true;
+    const selfMatch = typeFilter ? entry.isSimple && queryMatch && typeMatch : queryMatch && typeMatch;
+    if (selfMatch) {
+      addWithAncestors(nodeId);
+    }
   }
 
-  walkInner(roots);
   return ids;
 }
 

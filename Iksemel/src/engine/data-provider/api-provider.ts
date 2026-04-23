@@ -155,6 +155,10 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
+function asString(v: unknown): string {
+  return typeof v === "string" ? v : "";
+}
+
 function parseSampleDataResponse(json: unknown): SampleDataResponse {
   if (!isRecord(json)) return emptyResponse();
 
@@ -166,8 +170,8 @@ function parseSampleDataResponse(json: unknown): SampleDataResponse {
   const fields: FieldSampleData[] = rawFields
     .filter(isRecord)
     .map((f) => ({
-      fieldId: String(f["fieldId"] ?? ""),
-      fieldPath: String(f["fieldPath"] ?? ""),
+      fieldId: asString(f["fieldId"]),
+      fieldPath: asString(f["fieldPath"]),
       values: parseValues(f["values"]),
       totalCount: Number(f["totalCount"]) || 0,
       distinctCount: Number(f["distinctCount"]) || 0,
@@ -187,7 +191,7 @@ function parseSampleDataResponse(json: unknown): SampleDataResponse {
 function parseValues(raw: unknown): readonly import("./types").SampleValue[] {
   if (!Array.isArray(raw)) return [];
   return raw.filter(isRecord).map((v) => ({
-    value: String(v["value"] ?? ""),
+    value: asString(v["value"]),
     count: Number(v["count"]) || 0,
   }));
 }
@@ -199,7 +203,7 @@ function parseCardinalityResponse(json: unknown): readonly CardinalityStats[] {
 
 function parseOneCardinality(c: Record<string, unknown>): CardinalityStats {
   return {
-    elementPath: String(c["elementPath"] ?? ""),
+    elementPath: asString(c["elementPath"]),
     avgCount: Number(c["avgCount"]) || 0,
     minCount: Number(c["minCount"]) || 0,
     maxCount: Number(c["maxCount"]) || 0,

@@ -3,9 +3,18 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import { readFileSync } from "fs";
 
-const pkg = JSON.parse(readFileSync(resolve(__dirname, "package.json"), "utf-8"));
+interface PackageJsonLite {
+  readonly version: string;
+}
+
+const pkg = JSON.parse(
+  readFileSync(resolve(__dirname, "package.json"), "utf-8"),
+) as PackageJsonLite;
 
 export default defineConfig({
+  server: {
+    port: 5653,
+  },
   plugins: [react()],
   define: {
     __XFEB_VERSION__: JSON.stringify(pkg.version),

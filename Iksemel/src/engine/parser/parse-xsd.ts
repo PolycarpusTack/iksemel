@@ -7,6 +7,7 @@
  */
 
 import type { ParseResult } from "@/types";
+import { validateXmlDocument } from "@/utils";
 import type { ParserOptions } from "./types";
 import { DEFAULT_PARSER_OPTIONS, freezeNode } from "./types";
 import { xsdChildren } from "./namespace";
@@ -35,16 +36,11 @@ export function parseXSD(
 ): ParseResult {
   const opts: ParserOptions = { ...DEFAULT_PARSER_OPTIONS, ...options };
 
-  // Parse XML
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xsdText, "text/xml");
-
-  // Check for parse errors
-  const parseError = doc.querySelector("parsererror");
-  if (parseError) {
-    const errorText = parseError.textContent?.slice(0, 200) ?? "Unknown parse error";
-    throw new Error(`Invalid XSD: ${errorText}`);
+  const parsed = validateXmlDocument(xsdText, "text/xml");
+  if (!parsed.valid) {
+    throw new Error(`Invalid XSD: ${parsed.error ?? "Unknown parse error"}`);
   }
+  const doc = parsed.doc;
 
   // Ensure we have a root element
   const root = doc.documentElement;

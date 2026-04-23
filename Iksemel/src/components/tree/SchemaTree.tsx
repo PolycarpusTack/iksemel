@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react";
 import type { SchemaNode, SelectionState, ExpansionState } from "@/types";
 import { TreeNode } from "./TreeNode";
-import { flattenTree } from "./flattenTree";
+import { buildTreeSearchIndex, flattenTree } from "./flattenTree";
 import { useVirtualTree } from "./useVirtualTree";
 import styles from "./SchemaTree.module.css";
 
@@ -55,9 +55,12 @@ export function SchemaTree({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   /** Flatten tree into a display-ordered list of visible nodes. */
+  const searchIndex = useMemo(() => buildTreeSearchIndex(schema), [schema]);
+
+  /** Flatten tree into a display-ordered list of visible nodes. */
   const flatNodes = useMemo(
-    () => flattenTree(schema, expansion, searchQuery, typeFilter),
-    [schema, expansion, searchQuery, typeFilter],
+    () => flattenTree(schema, expansion, searchQuery, typeFilter, searchIndex),
+    [schema, expansion, searchQuery, typeFilter, searchIndex],
   );
 
   /**

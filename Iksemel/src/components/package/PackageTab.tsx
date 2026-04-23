@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import type { ReportMetadata, ExportFormat, StyleConfig, PolicyViolation } from "@/types";
+import { createPackageZip } from "@engine/package";
 import { MetadataEditor } from "./MetadataEditor";
 import { ExecutionSettings } from "./ExecutionSettings";
 import { PackageFileList } from "./PackageFileList";
@@ -33,6 +34,18 @@ function triggerDownload(content: string, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
+function triggerBinaryDownload(content: Uint8Array, filename: string): void {
+  const blob = new Blob([content], { type: "application/zip" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
 export function PackageTab({
   metadata,
   slug,
@@ -51,16 +64,25 @@ export function PackageTab({
     triggerDownload(content, filename);
   }, []);
 
-  const handleDownloadAll = useCallback(() => {
+  const handleDownloadAll = useCallback(async () => {
     const files = [
       { content: filterXml, filename: `${slug}-filter.xml` },
       { content: xsltOutput, filename: `${slug}-transform.xslt` },
       { content: reportXml, filename: `${slug}-report.xml` },
     ];
 
-    files.forEach((file, index) => {
-      setTimeout(() => triggerDownload(file.content, file.filename), index * 300);
-    });
+    try {
+      const zip = await createPackageZip(files.map((file) => ({
+        path: file.filename,
+        content: file.content,
+      })));
+      triggerBinaryDownload(zip, `${slug}-package.zip`);
+      return;
+    } catch {
+      files.forEach((file, index) => {
+        setTimeout(() => triggerDownload(file.content, file.filename), index * 300);
+      });
+    }
   }, [filterXml, xsltOutput, reportXml, slug]);
 
   const violations = policyViolations ?? [];

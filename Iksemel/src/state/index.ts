@@ -1,6 +1,7 @@
 export {
   AppProvider,
   useAppState,
+  useAppSelector,
   useAppDispatch,
   appReducer,
   INITIAL_STATE,

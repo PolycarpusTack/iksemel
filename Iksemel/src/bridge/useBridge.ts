@@ -7,7 +7,7 @@
 
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import type { Dispatch } from "react";
-import type { AppAction } from "@/state/app-state";
+import type { AppAction } from "@/state";
 import type { SchemaNode, SelectionState, FilterValuesState, PolicyViolation } from "@/types";
 import { parseXSD } from "@engine/parser";
 import { countAll, countSelected } from "@engine/selection";
@@ -16,6 +16,7 @@ import { estimateSelectedWeight } from "@engine/analysis/payload";
 import { createBridge } from "./message-handler";
 import type { Bridge } from "./message-handler";
 import { parseReportConfig } from "./config-parser";
+import { validateXmlDocument } from "@/utils";
 import type { PackagePayload, SelectionMetrics } from "./types";
 
 interface UseBridgeOptions {
@@ -48,6 +49,11 @@ export function useBridge(options: UseBridgeOptions): UseBridgeResult {
       },
       onLoadConfig: (reportXmlContent: string) => {
         try {
+          const xmlValidation = validateXmlDocument(reportXmlContent, "application/xml");
+          if (!xmlValidation.valid) {
+            throw new Error(xmlValidation.error ?? "Invalid report XML");
+          }
+
           const config = parseReportConfig(reportXmlContent);
           dispatch({
             type: "LOAD_CONFIG",

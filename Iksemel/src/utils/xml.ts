@@ -21,7 +21,7 @@
  * ```
  */
 export function escXml(value: string | null | undefined): string {
-  return String(value ?? "")
+  return (value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")

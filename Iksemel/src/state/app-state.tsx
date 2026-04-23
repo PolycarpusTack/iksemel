@@ -7,15 +7,19 @@
  * a single discriminated-union action type and a pure reducer function.
  *
  * Usage:
- *   Wrap the app in <AppProvider> and consume via useAppState() / useAppDispatch().
+ *   Wrap the app in <AppProvider> and consume via useAppSelector() / useAppDispatch().
  */
 
 import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
+  useMemo,
   useReducer,
   useRef,
+  useSyncExternalStore,
+  useCallback,
   type Dispatch,
   type ReactNode,
 } from "react";
@@ -543,6 +547,13 @@ function findNode(
 const AppStateContext = createContext<AppState | null>(null);
 const AppDispatchContext = createContext<Dispatch<AppAction> | null>(null);
 
+interface AppStore {
+  getState(): AppState;
+  subscribe(listener: () => void): () => void;
+}
+
+const AppStoreContext = createContext<AppStore | null>(null);
+
 // ---------------------------------------------------------------------------
 // Provider component
 // ---------------------------------------------------------------------------
@@ -628,6 +639,25 @@ export function AppProvider({ children, initialState }: AppProviderProps): React
       selectionHistory: createHistory(restored.selection ?? {}),
     };
   });
+  const stateRef = useRef(state);
+  const listenersRef = useRef(new Set<() => void>());
+
+  useLayoutEffect(() => {
+    stateRef.current = state;
+    for (const listener of listenersRef.current) {
+      listener();
+    }
+  }, [state]);
+
+  const subscribe = useCallback((listener: () => void) => {
+    listenersRef.current.add(listener);
+    return () => {
+      listenersRef.current.delete(listener);
+    };
+  }, []);
+
+  const getState = useCallback(() => stateRef.current, []);
+  const store = useMemo<AppStore>(() => ({ getState, subscribe }), [getState, subscribe]);
 
   // Debounced auto-save to localStorage
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -640,11 +670,13 @@ export function AppProvider({ children, initialState }: AppProviderProps): React
   }, [state]);
 
   return (
-    <AppStateContext.Provider value={state}>
-      <AppDispatchContext.Provider value={dispatch}>
-        {children}
-      </AppDispatchContext.Provider>
-    </AppStateContext.Provider>
+    <AppStoreContext.Provider value={store}>
+      <AppStateContext.Provider value={state}>
+        <AppDispatchContext.Provider value={dispatch}>
+          {children}
+        </AppDispatchContext.Provider>
+      </AppStateContext.Provider>
+    </AppStoreContext.Provider>
   );
 }
 
@@ -678,4 +710,23 @@ export function useAppDispatch(): Dispatch<AppAction> {
     throw new Error("useAppDispatch must be used within an <AppProvider>");
   }
   return dispatch;
+}
+
+/**
+ * Subscribes to a selected slice of application state.
+ *
+ * Selector consumers only rerender when the selected value changes by Object.is.
+ * Must be called within an <AppProvider>.
+ */
+export function useAppSelector<T>(selector: (state: AppState) => T): T {
+  const store = useContext(AppStoreContext);
+  if (store === null) {
+    throw new Error("useAppSelector must be used within an <AppProvider>");
+  }
+
+  return useSyncExternalStore(
+    store.subscribe,
+    () => selector(store.getState()),
+    () => selector(store.getState()),
+  );
 }

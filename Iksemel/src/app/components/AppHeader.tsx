@@ -1,0 +1,48 @@
+import { SchemaUpload } from "@components/shared";
+import { Button } from "@components/primitives";
+import styles from "../../App.module.css";
+
+interface AppHeaderProps {
+  readonly isEmbedded: boolean;
+  readonly hasSchema: boolean;
+  readonly hasPolicyErrors: boolean;
+  readonly onSendPackageReady: () => void;
+  readonly onSchemaLoad: (xsdText: string) => void;
+  readonly onShowShortcuts: () => void;
+}
+
+export function AppHeader(props: AppHeaderProps) {
+  const {
+    isEmbedded,
+    hasSchema,
+    hasPolicyErrors,
+    onSendPackageReady,
+    onSchemaLoad,
+    onShowShortcuts,
+  } = props;
+
+  return (
+    <header className={styles["header"]}>
+      <div className={styles["logo"]}>
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="18" height="18" rx="3" stroke="var(--color-accent-green)" strokeWidth="1.5" />
+          <path d="M7 8h8M7 11h5M7 14h6" stroke="var(--color-accent-green)" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className={styles["title"]}>XML Filter &amp; Export Builder</span>
+      </div>
+      <span className={styles["subtitle"]}>Schema &rarr; Filter &rarr; Transform &rarr; Package</span>
+      <div className={styles["spacer"]} />
+      {isEmbedded && hasSchema && (
+        <Button variant="success" size="sm" onClick={onSendPackageReady} disabled={hasPolicyErrors}>
+          Save to WHATS&apos;ON
+        </Button>
+      )}
+      {hasSchema && !isEmbedded && (
+        <SchemaUpload onSchemaLoad={onSchemaLoad} hasSchema={true} />
+      )}
+      <Button size="sm" variant="ghost" onClick={onShowShortcuts} aria-label="Keyboard shortcuts (Shift+?)">
+        ?
+      </Button>
+    </header>
+  );
+}

@@ -7,14 +7,16 @@
 
 import { useEffect } from "react";
 import type { Dispatch } from "react";
-import type { AppAction } from "@/state/app-state";
+import type { AppAction } from "@/state";
 import type {
   FilterValuesState,
   PolicyRule,
   SelectionState,
   SchemaNode,
 } from "@/types";
-import { evaluatePolicy } from "@engine/policy";
+import { evaluatePolicyWithRuntime } from "@engine/policy";
+
+const POLICY_EVAL_DEBOUNCE_MS = 120;
 
 export function usePolicyEvaluation(
   dispatch: Dispatch<AppAction>,
@@ -24,12 +26,33 @@ export function usePolicyEvaluation(
   selection: SelectionState,
 ): void {
   useEffect(() => {
-    if (policy.length === 0) {
-      dispatch({ type: "SET_POLICY_VIOLATIONS", violations: [] });
-      return;
-    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      if (policy.length === 0) {
+        dispatch({ type: "SET_POLICY_VIOLATIONS", violations: [] });
+        return;
+      }
 
-    const violations = evaluatePolicy(policy, filterValues, schema, selection);
-    dispatch({ type: "SET_POLICY_VIOLATIONS", violations });
+      void evaluatePolicyWithRuntime({
+        rules: policy,
+        filterValues,
+        schema,
+        selection,
+      }).then((violations) => {
+        if (!cancelled) {
+          dispatch({ type: "SET_POLICY_VIOLATIONS", violations: [...violations] });
+        }
+      }).catch((error) => {
+        console.error("[XFEB] Policy evaluation failed:", error);
+        if (!cancelled) {
+          dispatch({ type: "SET_POLICY_VIOLATIONS", violations: [] });
+        }
+      });
+    }, POLICY_EVAL_DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [dispatch, policy, filterValues, schema, selection]);
 }

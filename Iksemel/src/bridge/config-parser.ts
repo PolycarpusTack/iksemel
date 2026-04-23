@@ -20,6 +20,7 @@ import type {
   FilterValue,
   FilterOperator,
 } from "@/types";
+import { validateXmlDocument } from "@/utils";
 
 // ─── Output ─────────────────────────────────────────────────────────────
 
@@ -103,14 +104,11 @@ const FORMAT_NAME_MAP: Readonly<Record<string, ExportFormat>> = {
  * ```
  */
 export function parseReportConfig(reportXml: string): ParsedConfig {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(reportXml, "application/xml");
-
-  // Check for parse errors
-  const parseError = doc.querySelector("parsererror");
-  if (parseError) {
+  const parsed = validateXmlDocument(reportXml, "application/xml");
+  if (!parsed.valid) {
     return createDefaultConfig();
   }
+  const doc = parsed.doc;
 
   const root = doc.documentElement;
   if (!root) {

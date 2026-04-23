@@ -48,7 +48,7 @@ export function CodeViewer({ code, filename, language }: CodeViewerProps) {
     <div className={styles["container"]}>
       <div className={styles["toolbar"]}>
         <span className={styles["filename"]}>{filename}</span>
-        <Button size="sm" variant="ghost" onClick={copyToClipboard}>
+        <Button size="sm" variant="ghost" onClick={() => { void copyToClipboard(); }}>
           Copy
         </Button>
         <Button size="sm" variant="ghost" onClick={download}>

@@ -24,6 +24,7 @@ import type { ReferenceDataEntry, PolicyRule, PolicyViolation } from "@/types";
 import { INBOUND_MESSAGE_TYPES } from "./types";
 import { createOriginValidator } from "./origin-validator";
 import type { OriginValidator } from "./origin-validator";
+import { bridgeDebug } from "./log";
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
@@ -128,7 +129,7 @@ export function createBridge(config: BridgeConfig): Bridge {
 
     // Origin check
     if (!validator.isAllowed(event.origin)) {
-      console.debug(
+      bridgeDebug(
         `[XFEB Bridge] Rejected message from origin: ${event.origin}`,
       );
       return;
@@ -142,14 +143,14 @@ export function createBridge(config: BridgeConfig): Bridge {
       typeof data !== "object" ||
       Array.isArray(data)
     ) {
-      console.debug("[XFEB Bridge] Ignored non-object message data");
+      bridgeDebug("[XFEB Bridge] Ignored non-object message data");
       return;
     }
 
     const msg = data as Record<string, unknown>;
 
     if (typeof msg["type"] !== "string") {
-      console.debug("[XFEB Bridge] Ignored message with missing/invalid type");
+      bridgeDebug("[XFEB Bridge] Ignored message with missing/invalid type");
       return;
     }
 
@@ -157,7 +158,7 @@ export function createBridge(config: BridgeConfig): Bridge {
 
     // Only process known inbound types
     if (!INBOUND_MESSAGE_TYPES.has(type)) {
-      console.debug(`[XFEB Bridge] Ignored unknown message type: ${type}`);
+      bridgeDebug(`[XFEB Bridge] Ignored unknown message type: ${type}`);
       return;
     }
 
@@ -167,7 +168,7 @@ export function createBridge(config: BridgeConfig): Bridge {
       msg["payload"] === undefined ||
       typeof msg["payload"] !== "object"
     ) {
-      console.debug(
+      bridgeDebug(
         `[XFEB Bridge] Ignored message with missing/invalid payload: ${type}`,
       );
       return;
@@ -232,7 +233,7 @@ export function createBridge(config: BridgeConfig): Bridge {
   function sendToHost(message: OutboundMessage): void {
     const target = getHostWindow();
     if (!target) {
-      console.debug(
+      bridgeDebug(
         "[XFEB Bridge] Cannot send message — not running in embedded mode",
       );
       return;

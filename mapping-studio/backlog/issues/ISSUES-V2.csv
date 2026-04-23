@@ -1,0 +1,49 @@
+Key,Title,Type,Epic,Priority,Sprint,Story Points,Depends On,Labels
+MSV2-001,Define MappingSpec contracts and Zod schemas,Story,MSV2-E1,P0,S1,5,,contracts|mapping-engine
+MSV2-002,Build mapping migration loader,Story,MSV2-E1,P0,S1,3,MSV2-001,contracts|migrations
+MSV2-003,Deterministic serializer/deserializer,Story,MSV2-E1,P0,S1,3,MSV2-001,contracts|serialization
+MSV2-004,Root detector algorithm,Story,MSV2-E1,P0,S1,5,MSV2-001,mapping-engine|recommendations
+MSV2-005,Relationship analyzer and classifier,Story,MSV2-E1,P0,S1,8,MSV2-001,mapping-engine|relationships
+MSV2-006,Business label generator,Story,MSV2-E1,P1,S2,5,MSV2-001,ux|cx|mapping-engine
+MSV2-007,Field recommendation heuristic,Story,MSV2-E1,P0,S2,3,MSV2-001,recommendations
+MSV2-008,mappingToSchema canonical mapper,Story,MSV2-E1,P0,S2,5,MSV2-003;MSV2-005,mapping-engine|interop
+MSV2-009,mappingToXsd generator,Story,MSV2-E1,P0,S2,8,MSV2-008,xsd|interop
+MSV2-010,Mapping validator with error taxonomy,Story,MSV2-E1,P0,S2,5,MSV2-001;MSV2-005,validation
+MSV2-011,Contract tests and golden fixtures,Story,MSV2-E1,P0,S2,5,MSV2-002;MSV2-003;MSV2-008;MSV2-010,testing|quality-gate
+MSV2-012,DatabaseSchemaProvider contract and registry integration,Story,MSV2-E2,P0,S1,5,MSV2-001,providers|database
+MSV2-013,DB introspection adapter,Story,MSV2-E2,P0,S2,8,MSV2-012,providers|database
+MSV2-014,Provenance metadata on canonical nodes,Story,MSV2-E2,P1,S2,3,MSV2-012,lineage|providers
+MSV2-015,Confidence scoring and ambiguity diagnostics,Story,MSV2-E2,P0,S3,5,MSV2-013,diagnostics|recommendations
+MSV2-016,Unify XSD/XML provider output contracts,Story,MSV2-E2,P1,S2,3,MSV2-001,providers|contracts
+MSV2-017,Source-to-mapping bootstrap pipeline,Story,MSV2-E2,P0,S3,8,MSV2-004;MSV2-005;MSV2-012;MSV2-016,pipeline|mapping-engine
+MSV2-018,Provider telemetry and ingestion error taxonomy,Story,MSV2-E2,P1,S3,3,MSV2-012,telemetry|providers
+MSV2-019,Wizard shell and resumable step routing,Story,MSV2-E3,P0,S3,5,MSV2-017,ux|cx|wizard
+MSV2-020,Source selection step,Story,MSV2-E3,P0,S3,3,MSV2-017,ux|wizard
+MSV2-021,Root selection step with explanations,Story,MSV2-E3,P0,S3,5,MSV2-004;MSV2-019,ux|cx|wizard
+MSV2-022,Relationship confirmation step,Story,MSV2-E3,P0,S4,5,MSV2-005;MSV2-015,ux|cx|wizard
+MSV2-023,Field selection step with presets,Story,MSV2-E3,P0,S4,5,MSV2-007,ux|wizard|recommendations
+MSV2-024,Validation panel with guided fixes,Story,MSV2-E3,P0,S4,3,MSV2-010,ux|validation
+MSV2-025,Data shape and generated schema preview,Story,MSV2-E3,P1,S4,5,MSV2-008;MSV2-024,preview|ux
+MSV2-026,Publish step with export JSON and XSD,Story,MSV2-E3,P0,S4,3,MSV2-003;MSV2-009,publish|export
+MSV2-027,Wizard accessibility baseline,Story,MSV2-E3,P0,S4,3,MSV2-019;MSV2-020;MSV2-021;MSV2-022;MSV2-023;MSV2-024;MSV2-025;MSV2-026,a11y|ux
+MSV2-028,Canvas framework abstraction,Story,MSV2-E4,P1,S5,5,MSV2-019,canvas|architecture
+MSV2-029,Render nodes and typed edges,Story,MSV2-E4,P1,S5,5,MSV2-028,canvas|ux
+MSV2-030,Auto-layout strategy and fallback,Story,MSV2-E4,P1,S5,8,MSV2-029,canvas|performance
+MSV2-031,Panel and canvas shared reducer synchronization,Story,MSV2-E4,P0,S5,5,MSV2-028;MSV2-029,state-management|canvas
+MSV2-032,Canvas interactions and undo redo,Story,MSV2-E4,P1,S6,8,MSV2-031,canvas|history
+MSV2-033,Canvas export image and thumbnail metadata,Story,MSV2-E4,P2,S6,3,MSV2-029,canvas|export
+MSV2-034,Non-canvas equivalent controls,Story,MSV2-E4,P0,S6,3,MSV2-032,a11y|ux
+MSV2-035,Local drafts with auto-save,Story,MSV2-E5,P0,S6,3,MSV2-019,persistence
+MSV2-036,Version history diff and rollback,Story,MSV2-E5,P1,S6,5,MSV2-003,persistence|versioning
+MSV2-037,Server persistence integration,Story,MSV2-E5,P0,S7,5,MSV2-035,persistence|backend
+MSV2-038,Secret-safe DB connectivity model,Story,MSV2-E5,P0,S7,8,MSV2-013,security|database
+MSV2-039,Structured telemetry funnel and failures,Story,MSV2-E5,P1,S7,3,MSV2-019;MSV2-026,telemetry|ops
+MSV2-040,Audit events for publish and rollback,Story,MSV2-E5,P1,S7,3,MSV2-036,audit|ops
+MSV2-041,Runbook and migration docs,Story,MSV2-E5,P1,S7,2,MSV2-037;MSV2-040,docs|ops
+MSV2-042,Large and ambiguous golden fixtures,Story,MSV2-E6,P1,S7,5,MSV2-011;MSV2-015,testing|fixtures
+MSV2-043,E2E full journey suite,Story,MSV2-E6,P0,S8,8,MSV2-026;MSV2-037,testing|e2e
+MSV2-044,Performance benchmark harness in CI,Story,MSV2-E6,P0,S8,5,MSV2-030;MSV2-032,performance|ci
+MSV2-045,Accessibility hardening pass,Story,MSV2-E6,P0,S8,5,MSV2-027;MSV2-034,a11y|qa
+MSV2-046,Pilot rollout instrumentation checklist,Story,MSV2-E6,P1,S8,3,MSV2-039;MSV2-043,pilot|ops
+MSV2-047,RC stabilization and bug bash,Story,MSV2-E6,P0,S8,5,MSV2-043;MSV2-046,release|qa
+MSV2-048,Production launch and two-week review,Story,MSV2-E6,P0,S8,2,MSV2-047,release|ops

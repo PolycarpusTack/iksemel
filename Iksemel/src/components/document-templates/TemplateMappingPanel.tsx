@@ -7,7 +7,7 @@
  */
 
 import type { ReactNode } from "react";
-import { useAppState } from "@/state/app-state";
+import { useAppSelector } from "@/state";
 import type { DocumentTemplate } from "@/types";
 
 /**
@@ -15,8 +15,7 @@ import type { DocumentTemplate } from "@/types";
  * configure how data maps into the template's structure.
  */
 export function TemplateMappingPanel(): ReactNode {
-  const state = useAppState();
-  const template = state.documentTemplate;
+  const template = useAppSelector((state) => state.documentTemplate);
 
   if (!template) {
     return null;
