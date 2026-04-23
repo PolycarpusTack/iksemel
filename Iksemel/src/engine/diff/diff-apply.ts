@@ -130,7 +130,7 @@ function applyFieldChange(
     (change.changeType === "added" && targetValue === "new") ||
     (change.changeType === "removed" && targetValue === "old");
 
-  const updated: Record<string, boolean> = { ...snapshot.selection };
+  const updated: Record<string, boolean | undefined> = { ...snapshot.selection };
 
   if (shouldSelect) {
     updated[fieldKey] = true;
@@ -149,7 +149,7 @@ function applyFieldFromTarget(
   const fieldKey = extractFieldKey(change.path);
   if (fieldKey === undefined) return current;
 
-  const updated: Record<string, boolean> = { ...current.selection };
+  const updated: Record<string, boolean | undefined> = { ...current.selection };
   const targetSelected = target.selection[fieldKey] === true;
 
   if (targetSelected) {

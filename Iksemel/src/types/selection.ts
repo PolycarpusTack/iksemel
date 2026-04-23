@@ -2,7 +2,7 @@
  * Maps node IDs to their selection state.
  * A node is selected if its ID is present and true.
  */
-export type SelectionState = Readonly<Record<string, boolean>>;
+export type SelectionState = Readonly<Record<string, boolean | undefined>>;
 
 /**
  * Tri-state checkbox value for tree nodes.
