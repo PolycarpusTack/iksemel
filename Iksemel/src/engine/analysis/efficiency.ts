@@ -176,14 +176,9 @@ function analyzeRepeatingElements(
     const isRepeating = node.maxOccurs === "unbounded" || parseInt(node.maxOccurs, 10) > 1;
     if (isRepeating && selection[node.id]) {
       total++;
-      // For now, assume if node has children selected, it's "filtered"
-      // In real implementation, check filterValues
-      const hasSelectedChildren = node.children.some(c => selection[c.id]);
-      if (hasSelectedChildren) {
-        filtered++;
-      }
+      // filtered stays 0 — requires filterValues parameter to implement correctly
     }
-    
+
     for (const child of node.children) {
       walk(child);
     }
