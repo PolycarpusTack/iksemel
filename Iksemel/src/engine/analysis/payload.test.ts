@@ -48,8 +48,15 @@ describe("estimateSelectedWeight", () => {
       makeLeaf("a", "A", "string"),
       makeLeaf("b", "B", "string"),
     ]);
-    // Only a is selected: max(40, 30) = 40
-    expect(estimateSelectedWeight(container, { c: true, a: true })).toBe(40);
+    // Only a is selected: children weight (40) + container overhead (30) = 70
+    expect(estimateSelectedWeight(container, { c: true, a: true })).toBe(70);
+  });
+
+  it("returns 0 for selected container with all children deselected", () => {
+    const child = makeLeaf("a", "A", "string");
+    const parent = makeContainer("p", "P", [child]);
+    // parent is selected but child is not in sel
+    expect(estimateSelectedWeight(parent, { p: true })).toBe(0);
   });
 });
 
