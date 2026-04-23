@@ -206,7 +206,9 @@ export function createBridge(config: BridgeConfig): Bridge {
       }
       case "SET_ORIGIN_WHITELIST": {
         for (const origin of message.payload.origins) {
-          validator.addOrigin(origin);
+          if (origin !== "*") {
+            validator.addOrigin(origin);
+          }
         }
         break;
       }

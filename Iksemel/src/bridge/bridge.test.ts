@@ -391,6 +391,30 @@ describe("Message Handling", () => {
 
     debugSpy.mockRestore();
   });
+
+  it("SET_ORIGIN_WHITELIST rejects wildcard '*' — cannot escalate trust to all origins", async () => {
+    const debugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    // Attempt to add wildcard via SET_ORIGIN_WHITELIST
+    fireMessage({
+      type: "SET_ORIGIN_WHITELIST",
+      payload: { origins: ["*"] },
+    });
+    await flushMicrotasks();
+
+    // A message from an unknown origin must still be rejected
+    fireMessage(
+      { type: "LOAD_SCHEMA", payload: { xsdContent: "evil" } },
+      "https://evil.com",
+    );
+    await flushMicrotasks();
+
+    expect(onLoadSchema).not.toHaveBeenCalled();
+
+    debugSpy.mockRestore();
+    warnSpy.mockRestore();
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════
