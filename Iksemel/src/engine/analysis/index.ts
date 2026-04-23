@@ -14,3 +14,9 @@ export type { SearchResult } from "./search";
 
 export { validateFilterCompleteness } from "./validation";
 export type { ValidationWarning } from "./validation";
+
+export {
+  analyzeFilterEfficiency,
+  simulateFilterImpact,
+} from "./efficiency";
+export type { EfficiencyScore, EfficiencyFactor } from "./efficiency";

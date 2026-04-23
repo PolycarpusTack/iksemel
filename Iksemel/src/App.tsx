@@ -9,7 +9,8 @@ import {
   getRepeatingElements,
 } from "@engine/selection";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
-import { computeReduction, estimateTotalSize, estimateSelectedSize, detectPayloadExplosions, searchSchema, validateFilterCompleteness } from "@engine/analysis";
+import { computeReduction, estimateTotalSize, estimateSelectedSize, detectPayloadExplosions, searchSchema, validateFilterCompleteness, analyzeFilterEfficiency } from "@engine/analysis";
+import type { EfficiencyScore } from "@engine/analysis";
 import { estimatePayloadWithData, createDataProvider } from "@engine/data-provider";
 import type { DataProvider } from "@engine/data-provider";
 import { generateFilterXml } from "@engine/generation/filter-xml";
@@ -29,6 +30,8 @@ import {
   PreviewTable,
   CodeViewer,
 } from "@components/export";
+import { SizeWarningModal } from "@components/export/SizeWarningModal";
+import { EfficiencyPanel } from "@components/filter/EfficiencyPanel";
 import { PackageTab } from "@components/package";
 import { FilterPanel } from "@components/filter";
 import { TemplateBrowser } from "@components/templates";
@@ -236,6 +239,11 @@ export function App() {
     [state.schema, state.selection],
   );
 
+  const efficiencyScore = useMemo(
+    () => (state.schema ? analyzeFilterEfficiency(state.schema, state.selection) : null),
+    [state.schema, state.selection],
+  );
+
   const selectedLeaves = useMemo(
     () => (state.schema ? getSelectedLeaves(state.schema, state.selection) : []),
     [state.schema, state.selection],
@@ -375,6 +383,10 @@ export function App() {
 
   // Template library
   const [customTemplates, setCustomTemplates] = useState<TemplateSpec[]>([]);
+
+  // Size warning modal state
+  const [showSizeWarning, setShowSizeWarning] = useState(false);
+  const [pendingExport, setPendingExport] = useState<(() => void) | null>(null);
   const allTemplates = useMemo(
     () => [...STANDARD_TEMPLATES, ...customTemplates],
     [customTemplates],
@@ -475,6 +487,37 @@ export function App() {
     }
   }, [addToast]);
 
+  // Handle export with size warning
+  const handleExportWithWarning = useCallback((exportFn: () => void) => {
+    const SIZE_WARNING_THRESHOLD = 50 * 1024 * 1024; // 50 MB
+    
+    if (reportSize >= SIZE_WARNING_THRESHOLD) {
+      setPendingExport(() => exportFn);
+      setShowSizeWarning(true);
+    } else {
+      exportFn();
+    }
+  }, [reportSize]);
+
+  const handleProceedWithExport = useCallback(() => {
+    setShowSizeWarning(false);
+    if (pendingExport) {
+      pendingExport();
+      setPendingExport(null);
+    }
+  }, [pendingExport]);
+
+  const handleCancelExport = useCallback(() => {
+    setShowSizeWarning(false);
+    setPendingExport(null);
+  }, []);
+
+  const handleOptimizeExport = useCallback(() => {
+    setShowSizeWarning(false);
+    setPendingExport(null);
+    dispatch({ type: "SET_ACTIVE_TAB", tab: "filter" });
+  }, [dispatch]);
+
   return (
     <div className={styles["app"]}>
       <header className={styles["header"]}>
@@ -488,7 +531,7 @@ export function App() {
         <span className={styles["subtitle"]}>Schema &rarr; Filter &rarr; Transform &rarr; Package</span>
         <div className={styles["spacer"]} />
         {isEmbedded && hasSchema && (
-          <Button variant="success" size="sm" onClick={sendPackageReady} disabled={hasPolicyErrors}>
+          <Button variant="success" size="sm" onClick={() => handleExportWithWarning(sendPackageReady)} disabled={hasPolicyErrors}>
             Save to WHATS&apos;ON
           </Button>
         )}

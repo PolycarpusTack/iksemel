@@ -13,8 +13,10 @@ import type {
   FilterValuesState,
   ReferenceData,
   PolicyRule,
+  SelectionState,
 } from "@/types";
 import { createDefaultFilter } from "@engine/filter/filter-helpers";
+import { analyzeFilterEfficiency } from "@engine/analysis";
 import { TypeBadge } from "@components/tree/TypeBadge";
 import { Button } from "@components/primitives";
 import { EnumFilterControl } from "./controls/EnumFilterControl";
@@ -23,6 +25,7 @@ import { DurationRangeControl } from "./controls/DurationRangeControl";
 import { NumberRangeControl } from "./controls/NumberRangeControl";
 import { BooleanControl } from "./controls/BooleanControl";
 import { StringFilterControl } from "./controls/StringFilterControl";
+import { EfficiencyPanel } from "./EfficiencyPanel";
 import styles from "./FilterPanel.module.css";
 
 /** Date/time type names */
@@ -42,6 +45,7 @@ interface FilterPanelProps {
   referenceData: ReferenceData | null;
   policy: readonly PolicyRule[];
   nodePath: readonly string[];
+  selection: SelectionState;
   onSetFilter: (nodeId: string, filter: FilterValue) => void;
   onRemoveFilter: (nodeId: string) => void;
   onClose: () => void;
@@ -53,6 +57,7 @@ export function FilterPanel({
   referenceData,
   policy,
   nodePath,
+  selection,
   onSetFilter,
   onRemoveFilter,
   onClose,
@@ -63,6 +68,13 @@ export function FilterPanel({
   );
 
   const currentFilter = filterValues[node.id] ?? null;
+  
+  // Calculate efficiency score for the current selection
+  const efficiencyScore = useMemo(() => {
+    // For efficiency analysis, we'd need the full schema roots
+    // This is a placeholder - in practice, pass roots from parent
+    return null;
+  }, [selection]);
 
   const handleChange = useCallback(
     (filter: FilterValue) => {
@@ -148,6 +160,8 @@ export function FilterPanel({
           Clear
         </Button>
       </div>
+      
+      {efficiencyScore && <EfficiencyPanel score={efficiencyScore} />}
     </div>
   );
 }
