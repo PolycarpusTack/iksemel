@@ -285,9 +285,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         parseWarnings: action.warnings,
         selection: freshSelection,
         selectionHistory: createHistory(freshSelection),
-        // Preserve reference data and policy — they may arrive before the schema
+        // Preserve fields that may arrive before the schema via bridge messages
         referenceData: state.referenceData,
         policy: state.policy,
+        documentTemplate: state.documentTemplate,
       };
     }
 
