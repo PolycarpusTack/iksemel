@@ -1,0 +1,249 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 12px 12px 0 0;
+}
+
+.header.warning {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-bottom-color: #fcd34d;
+}
+
+.header.critical {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  border-bottom-color: #f87171;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.content {
+  padding: 24px;
+}
+
+.message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0 0 20px 0;
+}
+
+.sizeDisplay {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sizeLabel {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sizeValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.sizeValue.warning {
+  color: #d97706;
+}
+
+.sizeValue.critical {
+  color: #dc2626;
+}
+
+.efficiencyNotice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.efficiencyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.efficiencyLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.gradeBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+}
+
+.gradeA {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.gradeB {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+}
+
+.gradeC {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+}
+
+.gradeD {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.gradeF {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.efficiencyTip {
+  font-size: 13px;
+  color: #1e40af;
+  margin: 0;
+}
+
+.recommendations {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.recTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 12px 0;
+}
+
+.recList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recList li {
+  font-size: 13px;
+  color: #475569;
+  padding-left: 16px;
+  position: relative;
+}
+
+.recList li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 0 0 12px 12px;
+}
+
+.optimizeBtn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.optimizeBtn:hover {
+  background: #2563eb;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.proceedBtn {
+  padding: 10px 20px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.proceedBtn:hover {
+  background: #16a34a;
+}
+
+.proceedBtn.critical {
+  background: #f97316;
+}
+
+.proceedBtn.critical:hover {
+  background: #ea580c;
+}

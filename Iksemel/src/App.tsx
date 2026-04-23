@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
+import { analyzeFilterEfficiency } from "@engine/analysis";
+import type { EfficiencyScore } from "@engine/analysis";
+import { SizeWarningModal } from "@components/export/SizeWarningModal";
 import { usePolicyEvaluation } from "@components/hooks/usePolicyEvaluation";
 import { KeyboardShortcutOverlay } from "@components/shared/KeyboardShortcutOverlay";
 import { useToast, ToastContainer } from "@components/shared/Toast";
@@ -171,6 +174,14 @@ export function App() {
     },
   });
 
+  const efficiencyScore = useMemo<EfficiencyScore | null>(
+    () => schema ? analyzeFilterEfficiency(schema, selection) : null,
+    [schema, selection],
+  );
+
+  const [showSizeWarning, setShowSizeWarning] = useState(false);
+  const [pendingExport, setPendingExport] = useState<(() => void) | null>(null);
+
   const leftPanelViewModel = useLeftPanelViewModel({
     schema,
     selection,
@@ -223,6 +234,35 @@ export function App() {
     reportXml,
   });
 
+  const handleExportWithWarning = useCallback((exportFn: () => void) => {
+    const SIZE_WARNING_THRESHOLD = 50 * 1024 * 1024; // 50 MB
+    if (reportSize >= SIZE_WARNING_THRESHOLD) {
+      setPendingExport(() => exportFn);
+      setShowSizeWarning(true);
+    } else {
+      exportFn();
+    }
+  }, [reportSize]);
+
+  const handleProceedWithExport = useCallback(() => {
+    setShowSizeWarning(false);
+    if (pendingExport) {
+      pendingExport();
+      setPendingExport(null);
+    }
+  }, [pendingExport]);
+
+  const handleCancelExport = useCallback(() => {
+    setShowSizeWarning(false);
+    setPendingExport(null);
+  }, []);
+
+  const handleOptimizeExport = useCallback(() => {
+    setShowSizeWarning(false);
+    setPendingExport(null);
+    dispatch({ type: "SET_ACTIVE_TAB", tab: "filter" });
+  }, [dispatch]);
+
   return (
     <div className={styles["app"]}>
       <AppHeader
@@ -264,6 +304,16 @@ export function App() {
         onAcceptAll={() => templateLibrary.handleDiffAcceptAll()}
         onDismiss={() => templateLibrary.handleDiffDismiss()}
       />
+
+      {showSizeWarning && (
+        <SizeWarningModal
+          estimatedSize={reportSize}
+          efficiencyScore={efficiencyScore}
+          onProceed={handleProceedWithExport}
+          onCancel={handleCancelExport}
+          onOptimize={handleOptimizeExport}
+        />
+      )}
 
       {showPerfPanel && (
         <PerfPanel
