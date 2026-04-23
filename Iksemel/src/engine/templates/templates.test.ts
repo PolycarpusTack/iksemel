@@ -236,6 +236,17 @@ describe("Template Serializer", () => {
         "hello",
       );
     });
+
+    it("round-trips template with native format (xlsx-native)", () => {
+      const original = STANDARD_TEMPLATES[0]!;
+      const withNativeFormat = { ...original, config: { ...original.config, format: "xlsx-native" } };
+      const json = serializeTemplate(withNativeFormat);
+      const restored = deserializeTemplate(json);
+
+      expect(restored.config.format).toBe("xlsx-native");
+      expect(restored.id).toBe(original.id);
+      expect(restored.name).toBe(original.name);
+    });
   });
 
   describe("stateToTemplate", () => {
