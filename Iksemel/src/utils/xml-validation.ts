@@ -19,10 +19,23 @@ function extractParseError(doc: Document): string | null {
   return raw.slice(0, 240);
 }
 
+function containsDoctype(xml: string): boolean {
+  return /<!DOCTYPE\s/i.test(xml);
+}
+
 export function validateXmlDocument(
   xml: string,
   mimeType: XmlMimeType = "application/xml",
 ): XmlValidationResult {
+  if (containsDoctype(xml)) {
+    const emptyDoc = new DOMParser().parseFromString("<empty/>", "application/xml");
+    return {
+      valid: false,
+      error: "DOCTYPE declarations are not allowed",
+      doc: emptyDoc,
+    };
+  }
+
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, mimeType);
   const error = extractParseError(doc);
