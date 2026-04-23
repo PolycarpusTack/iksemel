@@ -41,6 +41,7 @@ const NUMERIC_TYPES = new Set([
 
 interface FilterPanelProps {
   node: SchemaNode;
+  roots: readonly SchemaNode[];
   filterValues: FilterValuesState;
   referenceData: ReferenceData | null;
   policy: readonly PolicyRule[];
@@ -53,6 +54,7 @@ interface FilterPanelProps {
 
 export function FilterPanel({
   node,
+  roots,
   filterValues,
   referenceData,
   policy,
@@ -70,11 +72,10 @@ export function FilterPanel({
   const currentFilter = filterValues[node.id] ?? null;
   
   // Calculate efficiency score for the current selection
-  const efficiencyScore = useMemo(() => {
-    // For efficiency analysis, we'd need the full schema roots
-    // This is a placeholder - in practice, pass roots from parent
-    return null;
-  }, [selection]);
+  const efficiencyScore = useMemo(
+    () => (roots.length > 0 ? analyzeFilterEfficiency(roots, selection) : null),
+    [roots, selection],
+  );
 
   const handleChange = useCallback(
     (filter: FilterValue) => {

@@ -4,7 +4,7 @@
  * Warns users when their export configuration will generate large payloads.
  */
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { formatBytes } from "@engine/analysis";
 import type { EfficiencyScore } from "@engine/analysis";
 import styles from "./SizeWarningModal.module.css";
@@ -31,7 +31,43 @@ export function SizeWarningModal({
 }: SizeWarningModalProps) {
   const isCritical = estimatedSize >= SIZE_THRESHOLDS.CRITICAL;
   const isWarning = estimatedSize >= SIZE_THRESHOLDS.WARNING;
-  
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const firstFocusableRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    firstFocusableRef.current?.focus();
+
+    function handleKeyDown(e: KeyboardEvent): void {
+      if (e.key !== "Tab") return;
+      const modal = modalRef.current;
+      if (!modal) return;
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const formatSize = useCallback((bytes: number) => {
     if (bytes >= 1024 * 1024 * 1024) {
       return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
@@ -57,7 +93,7 @@ export function SizeWarningModal({
   
   return (
     <div className={styles["overlay"]} role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className={styles["modal"]}>
+      <div ref={modalRef} className={styles["modal"]}>
         <div className={`${styles["header"]} ${isCritical ? styles["critical"] : isWarning ? styles["warning"] : ""}`}>
           <h2 id="modal-title" className={styles["title"]}>{getTitle()}</h2>
         </div>
@@ -99,6 +135,7 @@ export function SizeWarningModal({
         
         <div className={styles["actions"]}>
           <button
+            ref={firstFocusableRef}
             type="button"
             className={styles["optimizeBtn"]}
             onClick={onOptimize}

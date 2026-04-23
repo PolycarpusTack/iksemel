@@ -65,7 +65,7 @@ export function toggleNode(
  * Selects all nodes in the tree.
  */
 export function selectAll(roots: readonly SchemaNode[]): SelectionState {
-  const next: Record<string, boolean> = {};
+  const next: Record<string, boolean | undefined> = {};
   for (const root of roots) {
     setAll(root, true, next);
   }
@@ -82,7 +82,7 @@ export function clearAll(): SelectionState {
 /**
  * Recursively sets selection state for a node and all descendants.
  */
-function setAll(node: SchemaNode, value: boolean, state: Record<string, boolean>): void {
+function setAll(node: SchemaNode, value: boolean, state: Record<string, boolean | undefined>): void {
   state[node.id] = value;
   for (const child of node.children) {
     setAll(child, value, state);
@@ -96,7 +96,7 @@ function setAll(node: SchemaNode, value: boolean, state: Record<string, boolean>
 function selectAncestors(
   targetId: string,
   nodes: readonly SchemaNode[],
-  state: Record<string, boolean>,
+  state: Record<string, boolean | undefined>,
   path: SchemaNode[] = [],
 ): boolean {
   for (const node of nodes) {

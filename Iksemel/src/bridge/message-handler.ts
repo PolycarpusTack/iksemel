@@ -206,7 +206,9 @@ export function createBridge(config: BridgeConfig): Bridge {
       }
       case "SET_ORIGIN_WHITELIST": {
         for (const origin of message.payload.origins) {
-          validator.addOrigin(origin);
+          if (origin !== "*") {
+            validator.addOrigin(origin);
+          }
         }
         break;
       }
@@ -235,6 +237,13 @@ export function createBridge(config: BridgeConfig): Bridge {
     if (!target) {
       bridgeDebug(
         "[XFEB Bridge] Cannot send message — not running in embedded mode",
+      );
+      return;
+    }
+    if (lastKnownOrigin === null && message.type !== "XFEB_READY") {
+      bridgeDebug(
+        "[XFEB Bridge] Dropping outbound message — host origin not yet known",
+        message.type,
       );
       return;
     }

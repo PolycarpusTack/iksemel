@@ -6,7 +6,8 @@
  */
 
 import type { SchemaNode, SelectionState } from "@/types";
-import { estimateSelectedWeight } from "./payload";
+import { estimateSelectedWeight, detectPayloadExplosions } from "./payload";
+import type { PayloadConfig } from "./payload";
 
 export interface EfficiencyScore {
   /** Letter grade A-F */
@@ -36,6 +37,7 @@ export interface EfficiencyFactor {
 export function analyzeFilterEfficiency(
   roots: readonly SchemaNode[],
   selection: SelectionState,
+  config: PayloadConfig = {},
 ): EfficiencyScore {
   const factors: EfficiencyFactor[] = [];
   const recommendations: string[] = [];
@@ -67,10 +69,10 @@ export function analyzeFilterEfficiency(
   });
   
   // Factor 2: Payload explosion detection
-  const explosions = detectPayloadContributors(roots, selection);
+  const explosions = detectPayloadExplosions(roots, selection, config, 20);
   let explosionImpact = 0;
-  if (explosions.length > 0) {
-    const topExplosion = explosions[0];
+  const topExplosion = explosions[0] as (typeof explosions)[0] | undefined;
+  if (topExplosion !== undefined) {
     if (topExplosion.contributionPct > 70) {
       explosionImpact = -30;
       recommendations.push(`"${topExplosion.nodeName}" contributes ${topExplosion.contributionPct}% of payload size. Consider filtering or excluding it.`);
@@ -157,50 +159,6 @@ export function analyzeFilterEfficiency(
 }
 
 /**
- * Detects elements that contribute disproportionately to payload size.
- */
-function detectPayloadContributors(
-  roots: readonly SchemaNode[],
-  selection: SelectionState,
-): Array<{ nodeId: string; nodeName: string; contributionPct: number }> {
-  const totalSelectedWeight = roots.reduce(
-    (sum, r) => sum + estimateSelectedWeight(r, selection),
-    0,
-  );
-  
-  if (totalSelectedWeight === 0) return [];
-  
-  const contributors: Array<{ nodeId: string; nodeName: string; contributionPct: number }> = [];
-  
-  function walk(node: SchemaNode): void {
-    if (!selection[node.id]) return;
-    
-    const isRepeating = node.maxOccurs === "unbounded" || parseInt(node.maxOccurs, 10) > 1;
-    if (isRepeating && node.children.length > 0) {
-      const nodeWeight = estimateSelectedWeight(node, selection);
-      const pct = Math.round((nodeWeight / totalSelectedWeight) * 100);
-      if (pct >= 20) { // Lower threshold for analysis view
-        contributors.push({
-          nodeId: node.id,
-          nodeName: node.name,
-          contributionPct: pct,
-        });
-      }
-    }
-    
-    for (const child of node.children) {
-      walk(child);
-    }
-  }
-  
-  for (const root of roots) {
-    walk(root);
-  }
-  
-  return contributors.sort((a, b) => b.contributionPct - a.contributionPct);
-}
-
-/**
  * Analyzes repeating elements in the selection.
  */
 function analyzeRepeatingElements(
@@ -218,14 +176,9 @@ function analyzeRepeatingElements(
     const isRepeating = node.maxOccurs === "unbounded" || parseInt(node.maxOccurs, 10) > 1;
     if (isRepeating && selection[node.id]) {
       total++;
-      // For now, assume if node has children selected, it's "filtered"
-      // In real implementation, check filterValues
-      const hasSelectedChildren = node.children.some(c => selection[c.id]);
-      if (hasSelectedChildren) {
-        filtered++;
-      }
+      // filtered stays 0 — requires filterValues parameter to implement correctly
     }
-    
+
     for (const child of node.children) {
       walk(child);
     }
@@ -323,6 +276,7 @@ export function simulateFilterImpact(
   roots: readonly SchemaNode[],
   currentSelection: SelectionState,
   modifiedSelection: SelectionState,
+  config: PayloadConfig = {},
 ): {
   sizeBefore: number;
   sizeAfter: number;
@@ -330,12 +284,12 @@ export function simulateFilterImpact(
   reductionPct: number;
 } {
   const sizeBefore = roots.reduce(
-    (sum, r) => sum + estimateSelectedWeight(r, currentSelection),
+    (sum, r) => sum + estimateSelectedWeight(r, currentSelection, config),
     0,
   );
-  
+
   const sizeAfter = roots.reduce(
-    (sum, r) => sum + estimateSelectedWeight(r, modifiedSelection),
+    (sum, r) => sum + estimateSelectedWeight(r, modifiedSelection, config),
     0,
   );
   

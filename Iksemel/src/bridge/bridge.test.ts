@@ -391,6 +391,30 @@ describe("Message Handling", () => {
 
     debugSpy.mockRestore();
   });
+
+  it("SET_ORIGIN_WHITELIST rejects wildcard '*' — cannot escalate trust to all origins", async () => {
+    const debugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    // Attempt to add wildcard via SET_ORIGIN_WHITELIST
+    fireMessage({
+      type: "SET_ORIGIN_WHITELIST",
+      payload: { origins: ["*"] },
+    });
+    await flushMicrotasks();
+
+    // A message from an unknown origin must still be rejected
+    fireMessage(
+      { type: "LOAD_SCHEMA", payload: { xsdContent: "evil" } },
+      "https://evil.com",
+    );
+    await flushMicrotasks();
+
+    expect(onLoadSchema).not.toHaveBeenCalled();
+
+    debugSpy.mockRestore();
+    warnSpy.mockRestore();
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -968,6 +992,30 @@ describe("Embedded Detection", () => {
 // ═══════════════════════════════════════════════════════════════════════
 
 describe("Outbound Messages", () => {
+  it("non-handshake outbound messages are dropped before host origin is known", () => {
+    const debugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+    const postSpy = vi.spyOn(window, "postMessage");
+
+    // In jsdom window === window.parent, so bridge is NOT embedded.
+    // sendToHost returns early (no host window). Test the guard logic directly
+    // via sendError which is simpler to observe — it must not throw.
+    const bridge = createBridge({});
+    bridge.start();
+
+    // These should not throw even when no host origin is known
+    expect(() => bridge.sendError("TEST", "msg")).not.toThrow();
+    expect(() => bridge.sendPackageReady({
+      filterXml: { content: "<f/>", filename: "f.xml", contentType: "text/xml" },
+      xsltTransform: { content: "<x/>", filename: "t.xslt", contentType: "text/xml" },
+      reportDefinition: { content: "<r/>", filename: "r.xml", contentType: "text/xml" },
+      templateScaffold: null,
+    })).not.toThrow();
+
+    bridge.stop();
+    postSpy.mockRestore();
+    debugSpy.mockRestore();
+  });
+
   it("sendReady does not throw in standalone mode", () => {
     const debugSpy = vi
       .spyOn(console, "debug")

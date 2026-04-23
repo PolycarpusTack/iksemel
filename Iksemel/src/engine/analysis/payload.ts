@@ -141,7 +141,8 @@ function estimateSelectedNodeWeight(
     0,
   );
 
-  return Math.max(childrenWeight, CONTAINER_OVERHEAD) * rep;
+  if (childrenWeight === 0) return 0;
+  return (childrenWeight + CONTAINER_OVERHEAD) * rep;
 }
 
 /**

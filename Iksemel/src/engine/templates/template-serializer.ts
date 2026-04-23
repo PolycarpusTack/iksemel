@@ -165,7 +165,10 @@ function validateConfig(config: Record<string, unknown>): void {
     }
   }
 
-  const validFormats: readonly string[] = ["xlsx", "csv", "word", "html"];
+  const validFormats: readonly string[] = [
+    "xlsx", "csv", "word", "html",
+    "xlsx-native", "docx-native", "pptx-native", "ods-native", "odt-native",
+  ];
   if (typeof config["format"] !== "string" || !validFormats.includes(config["format"])) {
     throw new TemplateValidationError(
       `config.format must be one of: ${validFormats.join(", ")}`,
