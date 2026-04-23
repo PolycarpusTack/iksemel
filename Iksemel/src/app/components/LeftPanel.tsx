@@ -119,10 +119,12 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
       {filterPanel.focusedNode && filterPanel.focusedNode.type === "simple" && (
         <FilterPanel
           node={filterPanel.focusedNode}
+          roots={schema ?? []}
           filterValues={filterValues}
           referenceData={referenceData}
           policy={policy}
           nodePath={filterPanel.focusedNodePath}
+          selection={selection}
           onSetFilter={(nodeId, filter) => filterPanel.handleSetFilter(nodeId, filter)}
           onRemoveFilter={(nodeId) => filterPanel.handleRemoveFilter(nodeId)}
           onClose={() => filterPanel.handleCloseFilterPanel()}

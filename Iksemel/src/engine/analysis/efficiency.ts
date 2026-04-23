@@ -71,8 +71,8 @@ export function analyzeFilterEfficiency(
   // Factor 2: Payload explosion detection
   const explosions = detectPayloadExplosions(roots, selection, config, 20);
   let explosionImpact = 0;
-  if (explosions.length > 0) {
-    const topExplosion = explosions[0];
+  const topExplosion = explosions[0] as (typeof explosions)[0] | undefined;
+  if (topExplosion !== undefined) {
     if (topExplosion.contributionPct > 70) {
       explosionImpact = -30;
       recommendations.push(`"${topExplosion.nodeName}" contributes ${topExplosion.contributionPct}% of payload size. Consider filtering or excluding it.`);
