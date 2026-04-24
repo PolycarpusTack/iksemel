@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, type ReactNode } from "react";
+import { Suspense, lazy, memo, useState, type ReactNode } from "react";
 import { TabContainer, HistoryPanel } from "@components/shared";
 import {
   ExportDesignTab,
@@ -6,6 +6,7 @@ import {
   StylePanel,
   PreviewTable,
   FormatCompare,
+  PreviewPane,
 } from "@components/export";
 import { FilterSummaryTab } from "@components/filter";
 import type { AppState } from "@/state";
@@ -71,6 +72,7 @@ export interface RightTabsProps {
 
 export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
   recordRender("RightTabs");
+  const [showPreview, setShowPreview] = useState(true);
   const {
     activeTab,
     format,
@@ -109,38 +111,63 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
         tabs={tabs}
       >
         {activeTab === "design" && (
-          <div className={styles["designTab"]}>
-            <ExportDesignTab
-              format={format}
-              rowSource={rowSource}
-              groupBy={groupBy}
-              sortBy={sortBy}
-              repeatingElements={repeatingElements}
-              selectedLeaves={selectedLeaves}
-              onFormatChange={(f) => actions.setFormat(f)}
-              onRowSourceChange={(s) => actions.setRowSource(s)}
-              onGroupByChange={(g) => actions.setGroupBy(g)}
-              onSortByChange={(s) => actions.setSortBy(s)}
-            />
-            <ColumnConfig
-              columns={columns}
-              selectedLeaves={selectedLeaves}
-              orphanedColumns={orphanedColumns}
-              onColumnsChange={(cols: ColumnDefinition[]) => actions.setColumns(cols)}
-            />
-            <StylePanel
-              style={style}
-              stylePresetKey={stylePresetKey}
-              format={format}
-              onStyleChange={(s) => actions.setStyle(s)}
-              onPresetChange={(k) => actions.setStylePreset(k)}
-            />
-            <PreviewTable
-              columns={columns}
-              style={style}
-              groupBy={groupBy}
-              title={title || metadata.name || "Export"}
-            />
+          <div className={showPreview ? styles["designSplit"] : styles["designTab"]}>
+            <div className={showPreview ? styles["designLeft"] : undefined}>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: showPreview ? 0 : "var(--space-4)" }}>
+                <button
+                  onClick={() => setShowPreview((v) => !v)}
+                  style={{ fontSize: "var(--font-size-xs)", padding: "var(--space-1) var(--space-3)", border: "1px solid var(--color-border-primary)", borderRadius: "var(--radius-sm)", background: "transparent", cursor: "pointer", color: "var(--color-text-muted)" }}
+                  aria-pressed={showPreview}
+                >
+                  {showPreview ? "Hide Preview" : "Show Preview"}
+                </button>
+              </div>
+              <ExportDesignTab
+                format={format}
+                rowSource={rowSource}
+                groupBy={groupBy}
+                sortBy={sortBy}
+                repeatingElements={repeatingElements}
+                selectedLeaves={selectedLeaves}
+                onFormatChange={(f) => actions.setFormat(f)}
+                onRowSourceChange={(s) => actions.setRowSource(s)}
+                onGroupByChange={(g) => actions.setGroupBy(g)}
+                onSortByChange={(s) => actions.setSortBy(s)}
+              />
+              <ColumnConfig
+                columns={columns}
+                selectedLeaves={selectedLeaves}
+                orphanedColumns={orphanedColumns}
+                onColumnsChange={(cols: ColumnDefinition[]) => actions.setColumns(cols)}
+              />
+              <StylePanel
+                style={style}
+                stylePresetKey={stylePresetKey}
+                format={format}
+                onStyleChange={(s) => actions.setStyle(s)}
+                onPresetChange={(k) => actions.setStylePreset(k)}
+              />
+              {!showPreview && (
+                <PreviewTable
+                  columns={columns}
+                  style={style}
+                  groupBy={groupBy}
+                  title={title || metadata.name || "Export"}
+                />
+              )}
+            </div>
+            {showPreview && (
+              <div className={styles["designRight"]}>
+                <PreviewPane
+                  xsltOutput={xsltOutput}
+                  format={format}
+                  columns={columns}
+                  style={style}
+                  groupBy={groupBy}
+                  title={title || metadata.name || "Export"}
+                />
+              </div>
+            )}
           </div>
         )}
 

@@ -103,6 +103,25 @@
   overflow-y: auto;
 }
 
+.designSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+.designLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  overflow-y: auto;
+}
+
+.designRight {
+  overflow: hidden;
+}
+
 .guideContent {
   padding: var(--space-8);
   color: var(--color-text-secondary);

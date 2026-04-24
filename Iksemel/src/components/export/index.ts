@@ -6,3 +6,4 @@ export { CodeViewer } from "./CodeViewer";
 export { ToggleSwitch } from "./ToggleSwitch";
 export { SizeWarningModal, shouldShowSizeWarning, shouldBlockExport } from "./SizeWarningModal";
 export { FormatCompare } from "./FormatCompare";
+export { PreviewPane } from "./PreviewPane";
