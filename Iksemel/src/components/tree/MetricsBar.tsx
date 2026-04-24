@@ -18,6 +18,7 @@ interface MetricsBarProps {
   payloadExplosions?: readonly PayloadExplosion[];
   validationWarnings?: readonly ValidationWarning[];
   dataEstimate?: { estimatedKb: number; source: "data" | "static" } | null;
+  onFocusNode?: (nodeId: string) => void;
 }
 
 /** Return the colour tier class based on reduction percentage. */
@@ -48,6 +49,7 @@ export function MetricsBar({
   payloadExplosions = [],
   validationWarnings = [],
   dataEstimate,
+  onFocusNode,
 }: MetricsBarProps) {
   const clampedPct = Math.max(0, Math.min(100, reductionPct));
   /* Gauge width = proportion of fields *not* selected (reduction). */
@@ -138,10 +140,22 @@ export function MetricsBar({
       {validationWarnings.length > 0 && (
         <div className={styles["warnings"]}>
           {validationWarnings.map((w) => (
-            <div key={w.node.id} className={styles["warningRow"]} role="alert">
-              <span className={styles["warningIcon"]} aria-hidden="true">&#x26A0;</span>
-              <span>{w.message}</span>
-            </div>
+            onFocusNode ? (
+              <button
+                key={w.node.id}
+                className={`${styles["warningRow"]} ${styles["warningRowClickable"]}`}
+                onClick={() => onFocusNode(w.node.id)}
+                title={`Navigate to ${w.node.name}`}
+              >
+                <span className={styles["warningIcon"]} aria-hidden="true">&#x26A0;</span>
+                <span>{w.message}</span>
+              </button>
+            ) : (
+              <div key={w.node.id} className={styles["warningRow"]} role="alert">
+                <span className={styles["warningIcon"]} aria-hidden="true">&#x26A0;</span>
+                <span>{w.message}</span>
+              </div>
+            )
           ))}
         </div>
       )}

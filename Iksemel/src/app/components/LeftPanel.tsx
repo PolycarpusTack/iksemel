@@ -118,6 +118,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         payloadExplosions={payloadExplosions}
         validationWarnings={validationWarnings}
         dataEstimate={dataEstimate}
+        onFocusNode={actions.focusNode}
       />
       <AntiPatternWarning reductionPct={reductionPct} threshold={20} />
       <div className={styles["treeContainer"]}>
