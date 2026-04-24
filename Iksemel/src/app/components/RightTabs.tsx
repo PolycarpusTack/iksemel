@@ -104,7 +104,7 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
   } = props;
 
   return (
-    <section className={styles["rightPanel"]}>
+    <section className={styles["rightPanel"]} data-tour="tabs">
       <TabContainer
         activeTab={activeTab}
         onTabChange={(tab) => actions.setActiveTab(tab as AppState["activeTab"])}

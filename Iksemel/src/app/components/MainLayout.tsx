@@ -13,7 +13,7 @@ export function MainLayout({ hasSchema, isEmbedded, onSchemaLoad, children }: Ma
   return (
     <main className={styles["main"]}>
       {!hasSchema ? (
-        <div className={styles["uploadContainer"]}>
+        <div className={styles["uploadContainer"]} data-tour="upload">
           {isEmbedded ? (
             <p className={styles["embeddedWaiting"]}>Waiting for schema from WHATS&apos;ON...</p>
           ) : (

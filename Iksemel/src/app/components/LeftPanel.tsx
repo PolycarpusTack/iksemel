@@ -90,7 +90,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   } = props;
 
   return (
-    <aside className={styles["leftPanel"]} style={{ width: panelWidth }}>
+    <aside className={styles["leftPanel"]} style={{ width: panelWidth }} data-tour="tree">
       <TreeToolbar
         searchQuery={searchQuery}
         onSearchChange={(q) => actions.setSearchQuery(q)}
@@ -112,19 +112,21 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         segments={filterPanel.focusedBreadcrumb}
         onNavigate={filterPanel.handleFocusNode}
       />
-      <MetricsBar
-        selectedCount={selectedCount}
-        totalCount={totalCount}
-        reductionPct={reductionPct}
-        filterCount={filterPanel.filterCount}
-        rawXmlSize={rawXmlSize}
-        reportSize={reportSize}
-        payloadExplosions={payloadExplosions}
-        validationWarnings={validationWarnings}
-        dataEstimate={dataEstimate}
-        onFocusNode={actions.focusNode}
-      />
-      <AntiPatternWarning reductionPct={reductionPct} threshold={20} />
+      <div data-tour="metrics">
+        <MetricsBar
+          selectedCount={selectedCount}
+          totalCount={totalCount}
+          reductionPct={reductionPct}
+          filterCount={filterPanel.filterCount}
+          rawXmlSize={rawXmlSize}
+          reportSize={reportSize}
+          payloadExplosions={payloadExplosions}
+          validationWarnings={validationWarnings}
+          dataEstimate={dataEstimate}
+          onFocusNode={actions.focusNode}
+        />
+        <AntiPatternWarning reductionPct={reductionPct} threshold={20} />
+      </div>
       <div className={styles["treeContainer"]}>
         <SchemaTree
           schema={schema ?? []}
@@ -147,18 +149,20 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         />
       </div>
       {filterPanel.focusedNode && filterPanel.focusedNode.type === "simple" && (
-        <FilterPanel
-          node={filterPanel.focusedNode}
-          roots={schema ?? []}
-          filterValues={filterValues}
-          referenceData={referenceData}
-          policy={policy}
-          nodePath={filterPanel.focusedNodePath}
-          selection={selection}
-          onSetFilter={(nodeId, filter) => filterPanel.handleSetFilter(nodeId, filter)}
-          onRemoveFilter={(nodeId) => filterPanel.handleRemoveFilter(nodeId)}
-          onClose={() => filterPanel.handleCloseFilterPanel()}
-        />
+        <div data-tour="filter">
+          <FilterPanel
+            node={filterPanel.focusedNode}
+            roots={schema ?? []}
+            filterValues={filterValues}
+            referenceData={referenceData}
+            policy={policy}
+            nodePath={filterPanel.focusedNodePath}
+            selection={selection}
+            onSetFilter={(nodeId, filter) => filterPanel.handleSetFilter(nodeId, filter)}
+            onRemoveFilter={(nodeId) => filterPanel.handleRemoveFilter(nodeId)}
+            onClose={() => filterPanel.handleCloseFilterPanel()}
+          />
+        </div>
       )}
     </aside>
   );

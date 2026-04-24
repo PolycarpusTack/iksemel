@@ -9,6 +9,7 @@ interface AppHeaderProps {
   readonly onSendPackageReady: () => void;
   readonly onSchemaLoad: (xsdText: string) => void;
   readonly onShowShortcuts: () => void;
+  readonly onStartTour?: () => void;
 }
 
 export function AppHeader(props: AppHeaderProps) {
@@ -19,6 +20,7 @@ export function AppHeader(props: AppHeaderProps) {
     onSendPackageReady,
     onSchemaLoad,
     onShowShortcuts,
+    onStartTour,
   } = props;
 
   return (
@@ -39,6 +41,11 @@ export function AppHeader(props: AppHeaderProps) {
       )}
       {hasSchema && !isEmbedded && (
         <SchemaUpload onSchemaLoad={onSchemaLoad} hasSchema={true} />
+      )}
+      {onStartTour && (
+        <Button size="sm" variant="ghost" onClick={onStartTour} aria-label="Take a guided tour">
+          Tour
+        </Button>
       )}
       <Button size="sm" variant="ghost" onClick={onShowShortcuts} aria-label="Keyboard shortcuts (Shift+?)">
         ?

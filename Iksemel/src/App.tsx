@@ -13,6 +13,7 @@ import { SizeWarningModal } from "@components/export/SizeWarningModal";
 import { usePolicyEvaluation } from "@components/hooks/usePolicyEvaluation";
 import { KeyboardShortcutOverlay } from "@components/shared/KeyboardShortcutOverlay";
 import { useToast, ToastContainer } from "@components/shared/Toast";
+import { TooltipTour, useTour } from "@components/shared";
 import { useDataEstimate } from "@/app/hooks/useDataEstimate";
 import { useUiShortcuts, useBeforeUnloadWarning } from "@/app/hooks/useUiShortcuts";
 import { useFilterPanelState } from "@/app/hooks/useFilterPanelState";
@@ -95,6 +96,7 @@ export function App() {
   const canRedoSelection = checkCanRedo(selectionHistory);
 
   const { showShortcuts, setShowShortcuts } = useUiShortcuts(dispatch);
+  const { tourActive, startTour, completeTour } = useTour();
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   const resizablePanel = useResizablePanel({
@@ -399,6 +401,7 @@ export function App() {
         onSendPackageReady={sendPackageReady}
         onSchemaLoad={handleSchemaLoad}
         onShowShortcuts={() => setShowShortcuts(true)}
+        onStartTour={startTour}
       />
 
       <MainLayout
@@ -452,6 +455,8 @@ export function App() {
       )}
 
       <ToastContainer />
+
+      {tourActive && <TooltipTour onComplete={completeTour} />}
     </div>
   );
 }
