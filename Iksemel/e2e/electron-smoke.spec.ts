@@ -9,25 +9,29 @@ test("Electron app launches and shows schema upload panel", async () => {
   const appPath = path.join(__dirname, "../out/main/index.js");
 
   const app = await electron.launch({ args: [appPath] });
-  const page = await app.firstWindow();
+  try {
+    const page = await app.firstWindow();
 
-  await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("domcontentloaded");
 
-  await expect(page.locator("h2")).toContainText("Load XSD Schema");
-
-  await app.close();
+    await expect(page.locator("h2")).toContainText("Load XSD Schema");
+  } finally {
+    await app.close();
+  }
 });
 
 test("window.electronAPI is defined in renderer", async () => {
   const appPath = path.join(__dirname, "../out/main/index.js");
 
   const app = await electron.launch({ args: [appPath] });
-  const page = await app.firstWindow();
+  try {
+    const page = await app.firstWindow();
 
-  await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("domcontentloaded");
 
-  const hasElectronAPI = await page.evaluate(() => typeof window.electronAPI === "object");
-  expect(hasElectronAPI).toBe(true);
-
-  await app.close();
+    const hasElectronAPI = await page.evaluate(() => typeof window.electronAPI === "object");
+    expect(hasElectronAPI).toBe(true);
+  } finally {
+    await app.close();
+  }
 });
