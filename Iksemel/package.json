@@ -1,6 +1,7 @@
 {
   "name": "xfeb",
   "version": "0.1.0",
+  "main": "out/main/index.js",
   "description": "XML Filter & Export Builder — Build optimised XML filters and XSLT transformations for WHATS'ON broadcast exports",
   "private": true,
   "type": "module",
@@ -21,7 +22,12 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test"
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test",
+    "dev:electron": "electron-vite dev",
+    "build:electron": "electron-vite build",
+    "preview:electron": "electron-vite preview",
+    "dist:win": "npm run build:electron && electron-builder --win --config electron-builder.config.ts",
+    "dist:mac": "npm run build:electron && electron-builder --mac --config electron-builder.config.ts"
   },
   "dependencies": {
     "jszip": "^3.10.1",

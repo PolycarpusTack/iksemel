@@ -18,3 +18,7 @@ Thumbs.db
 test-results/
 playwright-report/
 blob-report/
+
+# Electron
+out/
+dist-electron/
