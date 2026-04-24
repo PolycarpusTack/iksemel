@@ -43,6 +43,7 @@ export interface LeftPanelProps {
   readonly filterPanel: FilterPanelState;
   readonly actions: AppActions;
   readonly onSelectSearchResults: () => void;
+  readonly onRangeSelect: (nodeIds: readonly string[]) => void;
 }
 
 export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
@@ -73,6 +74,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
     filterPanel,
     actions,
     onSelectSearchResults,
+    onRangeSelect,
   } = props;
 
   return (
@@ -117,6 +119,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
           focusedNodeId={focusedNodeId}
           filteredNodeIds={filterPanel.filteredNodeIds}
           typeFilter={typeFilter}
+          onRangeSelect={onRangeSelect}
         />
       </div>
       {filterPanel.focusedNode && filterPanel.focusedNode.type === "simple" && (

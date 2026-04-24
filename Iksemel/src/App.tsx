@@ -3,7 +3,7 @@ import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
-import { selectByIds } from "@engine/selection";
+import { selectByIds, selectRange } from "@engine/selection";
 import { analyzeFilterEfficiency, searchSchema } from "@engine/analysis";
 import type { EfficiencyScore } from "@engine/analysis";
 import { SizeWarningModal } from "@components/export/SizeWarningModal";
@@ -184,6 +184,12 @@ export function App() {
   const [showSizeWarning, setShowSizeWarning] = useState(false);
   const [pendingExport, setPendingExport] = useState<(() => void) | null>(null);
 
+  const handleRangeSelect = useCallback((nodeIds: readonly string[]) => {
+    if (!schema) return;
+    const newSel = selectRange(nodeIds, schema, selection);
+    dispatch({ type: "SET_SELECTION", selection: newSel });
+  }, [schema, selection, dispatch]);
+
   const handleSelectSearchResults = useCallback(() => {
     if (!schema || !searchQuery.trim()) return;
     const results = searchSchema(schema, searchQuery);
@@ -218,6 +224,7 @@ export function App() {
     validationWarnings,
     dataEstimate,
     onSelectSearchResults: handleSelectSearchResults,
+    onRangeSelect: handleRangeSelect,
   });
 
   const rightTabsViewModel = useRightTabsViewModel({

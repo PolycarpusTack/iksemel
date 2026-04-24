@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useCallback } from "react";
 import type { SchemaNode, SelectionState, ExpansionState } from "@/types";
 import { TreeNode } from "./TreeNode";
 import { buildTreeSearchIndex, flattenTree } from "./flattenTree";
@@ -28,6 +28,8 @@ interface SchemaTreeProps {
   filteredNodeIds?: ReadonlySet<string>;
   /** Optional type filter (e.g. "string", "dateTime"). */
   typeFilter?: string | null;
+  /** Called with ordered list of node IDs when a shift+click range is selected. */
+  onRangeSelect?: (nodeIds: readonly string[]) => void;
 }
 
 /**
@@ -51,8 +53,10 @@ export function SchemaTree({
   focusedNodeId,
   filteredNodeIds,
   typeFilter,
+  onRangeSelect,
 }: SchemaTreeProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const lastClickedIndexRef = useRef<number | null>(null);
 
   /** Flatten tree into a display-ordered list of visible nodes. */
   const searchIndex = useMemo(() => buildTreeSearchIndex(schema), [schema]);
@@ -78,6 +82,24 @@ export function SchemaTree({
     }
     return cache;
   }, [flatNodes]);
+
+  const handleNodeClick = useCallback((nodeId: string) => {
+    const idx = flatNodes.findIndex((n) => n.node.id === nodeId);
+    if (idx !== -1) lastClickedIndexRef.current = idx;
+    onToggleSelect(nodeId);
+  }, [flatNodes, onToggleSelect]);
+
+  const handleShiftClick = useCallback((nodeId: string) => {
+    if (!onRangeSelect) return;
+    const currentIndex = flatNodes.findIndex((n) => n.node.id === nodeId);
+    if (currentIndex === -1) return;
+    const from = lastClickedIndexRef.current ?? currentIndex;
+    const start = Math.min(from, currentIndex);
+    const end = Math.max(from, currentIndex);
+    const rangeIds = flatNodes.slice(start, end + 1).map((n) => n.node.id);
+    lastClickedIndexRef.current = currentIndex;
+    onRangeSelect(rangeIds);
+  }, [flatNodes, onRangeSelect]);
 
   /** Virtualise: only render nodes within (and near) the viewport. */
   const { visibleNodes, totalHeight, offsetY, onScroll } = useVirtualTree({
@@ -120,11 +142,12 @@ export function SchemaTree({
                 selection={selection}
                 expansion={expansionCache.get(flatNode.node.id) ?? EMPTY_EXPANSION}
                 schema={schema}
-                onToggleSelect={onToggleSelect}
+                onToggleSelect={handleNodeClick}
                 onToggleExpand={onToggleExpand}
                 onFocusNode={onFocusNode}
                 focusedNodeId={focusedNodeId}
                 hasFilter={filteredNodeIds?.has(flatNode.node.id)}
+                onShiftClick={onRangeSelect ? handleShiftClick : undefined}
                 flat
               />
             </div>

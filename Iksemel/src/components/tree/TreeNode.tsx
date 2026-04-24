@@ -22,6 +22,8 @@ interface TreeNodeProps {
   hasFilter?: boolean;
   /** When true, children are rendered by a parent virtualiser — skip recursive rendering. */
   flat?: boolean;
+  /** Called with the node ID when the row is shift-clicked. */
+  onShiftClick?: (nodeId: string) => void;
 }
 
 /** Format minOccurs/maxOccurs into a human-readable cardinality string. */
@@ -55,7 +57,7 @@ function countSelectedLeaves(node: SchemaNode, sel: SelectionState): number {
  */
 export const TreeNode = memo(
   function TreeNode({
-    node, level, selection, expansion, schema, onToggleSelect, onToggleExpand, onFocusNode, focusedNodeId, hasFilter, flat,
+    node, level, selection, expansion, schema, onToggleSelect, onToggleExpand, onFocusNode, focusedNodeId, hasFilter, flat, onShiftClick,
   }: TreeNodeProps) {
     const hasChildren = node.children.length > 0;
     const isExpanded = expansion[node.id] === true;
@@ -81,7 +83,12 @@ export const TreeNode = memo(
       [node.id, hasChildren, isExpanded, onToggleSelect, onToggleExpand],
     );
 
-    const handleRowClick = useCallback(() => {
+    const handleRowClick = useCallback((e: React.MouseEvent) => {
+      if (e.shiftKey && onShiftClick) {
+        e.preventDefault();
+        onShiftClick(node.id);
+        return;
+      }
       // If this is a selected simple-type node and onFocusNode is provided,
       // clicking the row focuses it for filtering instead of toggling selection.
       if (onFocusNode && node.type === "simple" && selection[node.id]) {
@@ -89,7 +96,7 @@ export const TreeNode = memo(
       } else {
         onToggleSelect(node.id);
       }
-    }, [node.id, node.type, selection, onToggleSelect, onFocusNode]);
+    }, [node.id, node.type, selection, onToggleSelect, onFocusNode, onShiftClick]);
     const handleChevronClick = useCallback(
       (e: React.MouseEvent) => { e.stopPropagation(); onToggleExpand(node.id); },
       [node.id, onToggleExpand],
@@ -208,5 +215,6 @@ export const TreeNode = memo(
     prev.onFocusNode === next.onFocusNode &&
     prev.focusedNodeId === next.focusedNodeId &&
     prev.hasFilter === next.hasFilter &&
-    prev.flat === next.flat,
+    prev.flat === next.flat &&
+    prev.onShiftClick === next.onShiftClick,
 );

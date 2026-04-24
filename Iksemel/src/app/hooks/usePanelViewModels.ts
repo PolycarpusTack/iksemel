@@ -43,6 +43,7 @@ interface LeftPanelViewModelInput {
   readonly validationWarnings: readonly ValidationWarning[];
   readonly dataEstimate: DataEstimate | null;
   readonly onSelectSearchResults: () => void;
+  readonly onRangeSelect: (nodeIds: readonly string[]) => void;
 }
 
 interface RightTabsViewModelInput {
@@ -99,6 +100,7 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     validationWarnings,
     dataEstimate,
     onSelectSearchResults,
+    onRangeSelect,
   } = input;
 
   return useMemo(() => ({
@@ -127,6 +129,7 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     filterPanel,
     actions,
     onSelectSearchResults,
+    onRangeSelect,
   }), [
     schema,
     selection,
@@ -153,6 +156,7 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     validationWarnings,
     dataEstimate,
     onSelectSearchResults,
+    onRangeSelect,
   ]);
 }
 
