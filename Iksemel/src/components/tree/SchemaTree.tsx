@@ -1,12 +1,25 @@
-import { useRef, useMemo, useCallback } from "react";
+import { useRef, useMemo, useCallback, useState } from "react";
 import type { SchemaNode, SelectionState, ExpansionState } from "@/types";
 import { TreeNode } from "./TreeNode";
+import { ContextMenu } from "./ContextMenu";
 import { buildTreeSearchIndex, flattenTree } from "./flattenTree";
 import { useVirtualTree } from "./useVirtualTree";
 import styles from "./SchemaTree.module.css";
 
 /** Row height in pixels — must match the CSS min-height of a tree row. */
 const ROW_HEIGHT = 32;
+
+function buildNodeXPath(targetId: string, nodes: readonly SchemaNode[], path: string[] = []): string | null {
+  for (const node of nodes) {
+    const current = [...path, node.name];
+    if (node.id === targetId) return current.join("/");
+    if (node.children.length > 0) {
+      const found = buildNodeXPath(targetId, node.children, current);
+      if (found) return found;
+    }
+  }
+  return null;
+}
 
 /**
  * A frozen empty expansion state shared by all collapsed nodes.
@@ -30,6 +43,12 @@ interface SchemaTreeProps {
   typeFilter?: string | null;
   /** Called with ordered list of node IDs when a shift+click range is selected. */
   onRangeSelect?: (nodeIds: readonly string[]) => void;
+  onSelectSubtree?: (nodeId: string) => void;
+  onDeselectSubtree?: (nodeId: string) => void;
+  onExpandSubtree?: (nodeId: string) => void;
+  onCollapseSubtree?: (nodeId: string) => void;
+  onSelectByType?: (typeName: string) => void;
+  onAddToColumns?: (nodeId: string) => void;
 }
 
 /**
@@ -54,9 +73,16 @@ export function SchemaTree({
   filteredNodeIds,
   typeFilter,
   onRangeSelect,
+  onSelectSubtree,
+  onDeselectSubtree,
+  onExpandSubtree,
+  onCollapseSubtree,
+  onSelectByType,
+  onAddToColumns,
 }: SchemaTreeProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const lastClickedIndexRef = useRef<number | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; node: SchemaNode } | null>(null);
 
   /** Flatten tree into a display-ordered list of visible nodes. */
   const searchIndex = useMemo(() => buildTreeSearchIndex(schema), [schema]);
@@ -100,6 +126,24 @@ export function SchemaTree({
     lastClickedIndexRef.current = currentIndex;
     onRangeSelect(rangeIds);
   }, [flatNodes, onRangeSelect]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent, node: SchemaNode) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, node });
+  }, []);
+
+  const handleCopyXPath = useCallback((node: SchemaNode) => {
+    const xpath = buildNodeXPath(node.id, schema) ?? node.name;
+    void navigator.clipboard.writeText(xpath);
+  }, [schema]);
+
+  const handleCopyName = useCallback((node: SchemaNode) => {
+    void navigator.clipboard.writeText(node.name);
+  }, []);
+
+  const handleCopyDocumentation = useCallback((node: SchemaNode) => {
+    void navigator.clipboard.writeText(node.documentation ?? "");
+  }, []);
 
   /** Virtualise: only render nodes within (and near) the viewport. */
   const { visibleNodes, totalHeight, offsetY, onScroll } = useVirtualTree({
@@ -148,12 +192,31 @@ export function SchemaTree({
                 focusedNodeId={focusedNodeId}
                 hasFilter={filteredNodeIds?.has(flatNode.node.id)}
                 onShiftClick={onRangeSelect ? handleShiftClick : undefined}
+                onContextMenu={handleContextMenu}
                 flat
               />
             </div>
           ))}
         </div>
       </div>
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          node={contextMenu.node}
+          onClose={() => setContextMenu(null)}
+          onSelectSubtree={(id) => { onSelectSubtree?.(id); }}
+          onDeselectSubtree={(id) => { onDeselectSubtree?.(id); }}
+          onExpandSubtree={(id) => { onExpandSubtree?.(id); }}
+          onCollapseSubtree={(id) => { onCollapseSubtree?.(id); }}
+          onCopyXPath={handleCopyXPath}
+          onCopyName={handleCopyName}
+          onCopyDocumentation={handleCopyDocumentation}
+          onFocusForFilter={(id) => { onFocusNode?.(id); }}
+          onSelectByType={(typeName) => { onSelectByType?.(typeName); }}
+          onAddToColumns={(id) => { onAddToColumns?.(id); }}
+        />
+      )}
     </div>
   );
 }

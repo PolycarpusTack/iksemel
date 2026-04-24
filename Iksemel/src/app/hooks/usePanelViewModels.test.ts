@@ -87,6 +87,12 @@ describe("usePanelViewModels", () => {
       dataEstimate: null,
       onSelectSearchResults: vi.fn(),
       onRangeSelect: vi.fn(),
+      onSelectSubtree: vi.fn(),
+      onDeselectSubtree: vi.fn(),
+      onExpandSubtree: vi.fn(),
+      onCollapseSubtree: vi.fn(),
+      onSelectByType: vi.fn(),
+      onAddToColumns: vi.fn(),
     };
 
     const { result, rerender } = renderHook(

@@ -24,6 +24,8 @@ interface TreeNodeProps {
   flat?: boolean;
   /** Called with the node ID when the row is shift-clicked. */
   onShiftClick?: (nodeId: string) => void;
+  /** Called on right-click (context menu). */
+  onContextMenu?: (e: React.MouseEvent, node: SchemaNode) => void;
 }
 
 /** Format minOccurs/maxOccurs into a human-readable cardinality string. */
@@ -57,7 +59,7 @@ function countSelectedLeaves(node: SchemaNode, sel: SelectionState): number {
  */
 export const TreeNode = memo(
   function TreeNode({
-    node, level, selection, expansion, schema, onToggleSelect, onToggleExpand, onFocusNode, focusedNodeId, hasFilter, flat, onShiftClick,
+    node, level, selection, expansion, schema, onToggleSelect, onToggleExpand, onFocusNode, focusedNodeId, hasFilter, flat, onShiftClick, onContextMenu: onContextMenuProp,
   }: TreeNodeProps) {
     const hasChildren = node.children.length > 0;
     const isExpanded = expansion[node.id] === true;
@@ -134,6 +136,7 @@ export const TreeNode = memo(
           onKeyDown={handleKeyDown}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
+          onContextMenu={onContextMenuProp ? (e) => onContextMenuProp(e, node) : undefined}
         >
           <span className={chevronClass} onClick={handleChevronClick} aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 10 10">
@@ -216,5 +219,6 @@ export const TreeNode = memo(
     prev.focusedNodeId === next.focusedNodeId &&
     prev.hasFilter === next.hasFilter &&
     prev.flat === next.flat &&
-    prev.onShiftClick === next.onShiftClick,
+    prev.onShiftClick === next.onShiftClick &&
+    prev.onContextMenu === next.onContextMenu,
 );

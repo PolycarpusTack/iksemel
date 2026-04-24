@@ -44,6 +44,12 @@ interface LeftPanelViewModelInput {
   readonly dataEstimate: DataEstimate | null;
   readonly onSelectSearchResults: () => void;
   readonly onRangeSelect: (nodeIds: readonly string[]) => void;
+  readonly onSelectSubtree: (nodeId: string) => void;
+  readonly onDeselectSubtree: (nodeId: string) => void;
+  readonly onExpandSubtree: (nodeId: string) => void;
+  readonly onCollapseSubtree: (nodeId: string) => void;
+  readonly onSelectByType: (typeName: string) => void;
+  readonly onAddToColumns: (nodeId: string) => void;
 }
 
 interface RightTabsViewModelInput {
@@ -101,6 +107,12 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     dataEstimate,
     onSelectSearchResults,
     onRangeSelect,
+    onSelectSubtree,
+    onDeselectSubtree,
+    onExpandSubtree,
+    onCollapseSubtree,
+    onSelectByType,
+    onAddToColumns,
   } = input;
 
   return useMemo(() => ({
@@ -130,6 +142,12 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     actions,
     onSelectSearchResults,
     onRangeSelect,
+    onSelectSubtree,
+    onDeselectSubtree,
+    onExpandSubtree,
+    onCollapseSubtree,
+    onSelectByType,
+    onAddToColumns,
   }), [
     schema,
     selection,
@@ -157,6 +175,12 @@ export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanel
     dataEstimate,
     onSelectSearchResults,
     onRangeSelect,
+    onSelectSubtree,
+    onDeselectSubtree,
+    onExpandSubtree,
+    onCollapseSubtree,
+    onSelectByType,
+    onAddToColumns,
   ]);
 }
 

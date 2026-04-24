@@ -44,6 +44,12 @@ export interface LeftPanelProps {
   readonly actions: AppActions;
   readonly onSelectSearchResults: () => void;
   readonly onRangeSelect: (nodeIds: readonly string[]) => void;
+  readonly onSelectSubtree: (nodeId: string) => void;
+  readonly onDeselectSubtree: (nodeId: string) => void;
+  readonly onExpandSubtree: (nodeId: string) => void;
+  readonly onCollapseSubtree: (nodeId: string) => void;
+  readonly onSelectByType: (typeName: string) => void;
+  readonly onAddToColumns: (nodeId: string) => void;
 }
 
 export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
@@ -75,6 +81,12 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
     actions,
     onSelectSearchResults,
     onRangeSelect,
+    onSelectSubtree,
+    onDeselectSubtree,
+    onExpandSubtree,
+    onCollapseSubtree,
+    onSelectByType,
+    onAddToColumns,
   } = props;
 
   return (
@@ -120,6 +132,12 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
           filteredNodeIds={filterPanel.filteredNodeIds}
           typeFilter={typeFilter}
           onRangeSelect={onRangeSelect}
+          onSelectSubtree={onSelectSubtree}
+          onDeselectSubtree={onDeselectSubtree}
+          onExpandSubtree={onExpandSubtree}
+          onCollapseSubtree={onCollapseSubtree}
+          onSelectByType={onSelectByType}
+          onAddToColumns={onAddToColumns}
         />
       </div>
       {filterPanel.focusedNode && filterPanel.focusedNode.type === "simple" && (

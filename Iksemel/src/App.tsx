@@ -3,7 +3,8 @@ import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
-import { selectByIds, selectRange } from "@engine/selection";
+import type { SchemaNode, ColumnDefinition } from "@/types";
+import { selectByIds, selectRange, selectByType } from "@engine/selection";
 import { analyzeFilterEfficiency, searchSchema } from "@engine/analysis";
 import type { EfficiencyScore } from "@engine/analysis";
 import { SizeWarningModal } from "@components/export/SizeWarningModal";
@@ -39,6 +40,22 @@ const TABS = [
   { id: "templates", label: "Templates" },
   { id: "guide", label: "Guide" },
 ] as const;
+
+function collectSubtreeIds(nodeId: string, nodes: readonly SchemaNode[]): readonly string[] {
+  for (const node of nodes) {
+    if (node.id === nodeId) {
+      const ids: string[] = [];
+      const gather = (n: SchemaNode) => { ids.push(n.id); n.children.forEach(gather); };
+      gather(node);
+      return ids;
+    }
+    if (node.children.length) {
+      const found = collectSubtreeIds(nodeId, node.children);
+      if (found.length) return found;
+    }
+  }
+  return [];
+}
 
 const LEFT_PANEL_MIN = 240;
 const LEFT_PANEL_MAX = 600;
@@ -198,6 +215,61 @@ export function App() {
     dispatch({ type: "SET_SELECTION", selection: newSel });
   }, [schema, searchQuery, selection, dispatch]);
 
+  const handleSelectSubtree = useCallback((nodeId: string) => {
+    if (!schema) return;
+    const ids = collectSubtreeIds(nodeId, schema);
+    if (!ids.length) return;
+    dispatch({ type: "SET_SELECTION", selection: selectByIds(ids, schema, selection) });
+  }, [schema, selection, dispatch]);
+
+  const handleDeselectSubtree = useCallback((nodeId: string) => {
+    if (!schema) return;
+    const ids = collectSubtreeIds(nodeId, schema);
+    if (!ids.length) return;
+    const next = { ...selection } as Record<string, boolean | undefined>;
+    for (const id of ids) { delete next[id]; }
+    dispatch({ type: "SET_SELECTION", selection: next });
+  }, [schema, selection, dispatch]);
+
+  const handleExpandSubtree = useCallback((nodeId: string) => {
+    if (!schema) return;
+    const ids = collectSubtreeIds(nodeId, schema);
+    if (!ids.length) return;
+    const next = { ...expansion } as Record<string, boolean>;
+    for (const id of ids) { next[id] = true; }
+    dispatch({ type: "SET_EXPANSION", expansion: next });
+  }, [schema, expansion, dispatch]);
+
+  const handleCollapseSubtree = useCallback((nodeId: string) => {
+    if (!schema) return;
+    const ids = collectSubtreeIds(nodeId, schema);
+    if (!ids.length) return;
+    const next = { ...expansion } as Record<string, boolean>;
+    for (const id of ids) { delete next[id]; }
+    dispatch({ type: "SET_EXPANSION", expansion: next });
+  }, [schema, expansion, dispatch]);
+
+  const handleSelectByType = useCallback((typeName: string) => {
+    if (!schema) return;
+    dispatch({ type: "SET_SELECTION", selection: selectByType(typeName, schema, selection) });
+  }, [schema, selection, dispatch]);
+
+  const handleAddToColumns = useCallback((nodeId: string) => {
+    if (columns.some((c) => c.id === nodeId)) return;
+    const leaf = selectedLeaves.find((l) => l.id === nodeId);
+    if (!leaf) return;
+    const newCol: ColumnDefinition = {
+      id: leaf.id,
+      xpath: leaf.xpath,
+      header: leaf.name,
+      format: "auto",
+      align: "left",
+      width: 120,
+      fullPath: leaf.path.join("/"),
+    };
+    actions.setColumns([...columns, newCol]);
+  }, [columns, selectedLeaves, actions]);
+
   const leftPanelViewModel = useLeftPanelViewModel({
     schema,
     selection,
@@ -225,6 +297,12 @@ export function App() {
     dataEstimate,
     onSelectSearchResults: handleSelectSearchResults,
     onRangeSelect: handleRangeSelect,
+    onSelectSubtree: handleSelectSubtree,
+    onDeselectSubtree: handleDeselectSubtree,
+    onExpandSubtree: handleExpandSubtree,
+    onCollapseSubtree: handleCollapseSubtree,
+    onSelectByType: handleSelectByType,
+    onAddToColumns: handleAddToColumns,
   });
 
   const rightTabsViewModel = useRightTabsViewModel({
