@@ -82,6 +82,7 @@ describe("usePanelViewModels", () => {
       payloadExplosions,
       validationWarnings,
       dataEstimate: null,
+      onSelectSearchResults: vi.fn(),
     };
 
     const { result, rerender } = renderHook(

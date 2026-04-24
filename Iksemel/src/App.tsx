@@ -3,7 +3,8 @@ import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
-import { analyzeFilterEfficiency } from "@engine/analysis";
+import { selectByIds } from "@engine/selection";
+import { analyzeFilterEfficiency, searchSchema } from "@engine/analysis";
 import type { EfficiencyScore } from "@engine/analysis";
 import { SizeWarningModal } from "@components/export/SizeWarningModal";
 import { usePolicyEvaluation } from "@components/hooks/usePolicyEvaluation";
@@ -182,6 +183,14 @@ export function App() {
   const [showSizeWarning, setShowSizeWarning] = useState(false);
   const [pendingExport, setPendingExport] = useState<(() => void) | null>(null);
 
+  const handleSelectSearchResults = useCallback(() => {
+    if (!schema || !searchQuery.trim()) return;
+    const results = searchSchema(schema, searchQuery);
+    const ids = results.map((r) => r.node.id);
+    const newSel = selectByIds(ids, schema, selection);
+    dispatch({ type: "SET_SELECTION", selection: newSel });
+  }, [schema, searchQuery, selection, dispatch]);
+
   const leftPanelViewModel = useLeftPanelViewModel({
     schema,
     selection,
@@ -207,6 +216,7 @@ export function App() {
     payloadExplosions,
     validationWarnings,
     dataEstimate,
+    onSelectSearchResults: handleSelectSearchResults,
   });
 
   const rightTabsViewModel = useRightTabsViewModel({

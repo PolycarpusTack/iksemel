@@ -90,6 +90,67 @@ function setAll(node: SchemaNode, value: boolean, state: Record<string, boolean 
 }
 
 /**
+ * Selects all nodes with the given IDs, plus their ancestors.
+ */
+export function selectByIds(
+  ids: readonly string[],
+  roots: readonly SchemaNode[],
+  currentSel: SelectionState,
+): SelectionState {
+  const next = { ...currentSel };
+  for (const id of ids) {
+    next[id] = true;
+  }
+  for (const id of ids) {
+    selectAncestors(id, roots, next);
+  }
+  return next;
+}
+
+/**
+ * Selects all visible nodes between two indices in a flat node list.
+ * Delegates to selectByIds.
+ */
+export function selectRange(
+  nodeIds: readonly string[],
+  roots: readonly SchemaNode[],
+  currentSel: SelectionState,
+): SelectionState {
+  return selectByIds(nodeIds, roots, currentSel);
+}
+
+/**
+ * Selects all leaf/simple/attribute nodes whose typeName matches (case-insensitive).
+ */
+export function selectByType(
+  typeName: string,
+  roots: readonly SchemaNode[],
+  currentSel: SelectionState,
+): SelectionState {
+  const next = { ...currentSel };
+  const newIds: string[] = [];
+
+  function walk(nodes: readonly SchemaNode[]): void {
+    for (const node of nodes) {
+      if (
+        (node.type === "simple" || node.isAttribute === true || !node.children.length) &&
+        node.typeName.toLowerCase() === typeName.toLowerCase()
+      ) {
+        next[node.id] = true;
+        newIds.push(node.id);
+      }
+      if (node.children.length > 0) walk(node.children);
+    }
+  }
+  walk(roots);
+
+  for (const id of newIds) {
+    selectAncestors(id, roots, next);
+  }
+  return next;
+}
+
+/**
  * Ensures all ancestors of a target node are selected.
  * Walks the tree from roots to find the path to the target.
  */

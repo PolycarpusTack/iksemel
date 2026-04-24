@@ -18,6 +18,7 @@ interface TreeToolbarProps {
   typeFilter: string | null;
   onTypeFilterChange: (type: string | null) => void;
   searchMatchCount?: number | null;
+  onSelectSearchResults?: () => void;
 }
 
 /**
@@ -37,6 +38,7 @@ export function TreeToolbar({
   typeFilter,
   onTypeFilterChange,
   searchMatchCount,
+  onSelectSearchResults,
 }: TreeToolbarProps) {
   const handleSearchInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +99,11 @@ export function TreeToolbar({
           <span className={styles["matchCount"]} aria-live="polite">
             {searchMatchCount} {searchMatchCount === 1 ? "match" : "matches"}
           </span>
+        )}
+        {searchMatchCount != null && searchMatchCount > 0 && onSelectSearchResults && (
+          <Button size="sm" variant="ghost" onClick={onSelectSearchResults} aria-label={`Select ${searchMatchCount} matching fields`}>
+            Select {searchMatchCount}
+          </Button>
         )}
       </div>
 

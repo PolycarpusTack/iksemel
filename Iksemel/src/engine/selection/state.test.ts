@@ -9,6 +9,9 @@ import {
   countSelected,
   getSelectedLeaves,
   getRepeatingElements,
+  selectByIds,
+  selectRange,
+  selectByType,
 } from "./state";
 
 /** Helper to create a simple test tree */
@@ -204,5 +207,69 @@ describe("getRepeatingElements", () => {
     expect(reps).toHaveLength(1);
     expect(reps[0]?.name).toBe("B");
     expect(reps[0]?.xpath).toBe("Root/B");
+  });
+});
+
+describe("selectByIds", () => {
+  const tree = makeTree();
+
+  it("selects the given nodes and their ancestors", () => {
+    const sel = selectByIds(["a1"], [tree], {});
+    expect(sel["a1"]).toBe(true);
+    expect(sel["a"]).toBe(true);
+    expect(sel["root"]).toBe(true);
+  });
+
+  it("merges with existing selection", () => {
+    const sel = selectByIds(["a2"], [tree], { b: true });
+    expect(sel["a2"]).toBe(true);
+    expect(sel["b"]).toBe(true);
+  });
+
+  it("handles empty id list without changing selection", () => {
+    const existing = { b: true };
+    const sel = selectByIds([], [tree], existing);
+    expect(sel).toEqual(existing);
+  });
+});
+
+describe("selectRange", () => {
+  const tree = makeTree();
+
+  it("selects all provided node ids and ancestors (delegates to selectByIds)", () => {
+    const sel = selectRange(["a1", "b"], [tree], {});
+    expect(sel["a1"]).toBe(true);
+    expect(sel["b"]).toBe(true);
+    expect(sel["root"]).toBe(true);
+  });
+});
+
+describe("selectByType", () => {
+  const tree = makeTree();
+
+  it("selects all leaf nodes with matching typeName (case-insensitive)", () => {
+    const sel = selectByType("string", [tree], {});
+    expect(sel["a1"]).toBe(true); // typeName: "string"
+    expect(sel["b"]).toBe(true);  // typeName: "string"
+    expect(sel["a2"]).toBeUndefined(); // typeName: "integer" — not selected
+  });
+
+  it("auto-selects ancestors of matched nodes", () => {
+    const sel = selectByType("integer", [tree], {});
+    expect(sel["a2"]).toBe(true);
+    expect(sel["a"]).toBe(true);
+    expect(sel["root"]).toBe(true);
+  });
+
+  it("is case-insensitive", () => {
+    const sel = selectByType("STRING", [tree], {});
+    expect(sel["a1"]).toBe(true);
+    expect(sel["b"]).toBe(true);
+  });
+
+  it("merges with existing selection", () => {
+    const sel = selectByType("integer", [tree], { a1: true });
+    expect(sel["a1"]).toBe(true);
+    expect(sel["a2"]).toBe(true);
   });
 });

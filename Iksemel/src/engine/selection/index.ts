@@ -7,6 +7,9 @@ export {
   countSelected,
   getSelectedLeaves,
   getRepeatingElements,
+  selectByIds,
+  selectRange,
+  selectByType,
 } from "./state";
 
 export {

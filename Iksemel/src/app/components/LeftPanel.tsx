@@ -42,6 +42,7 @@ export interface LeftPanelProps {
   readonly dataEstimate: DataEstimate | null;
   readonly filterPanel: FilterPanelState;
   readonly actions: AppActions;
+  readonly onSelectSearchResults: () => void;
 }
 
 export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
@@ -71,6 +72,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
     dataEstimate,
     filterPanel,
     actions,
+    onSelectSearchResults,
   } = props;
 
   return (
@@ -89,6 +91,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         typeFilter={typeFilter}
         onTypeFilterChange={onTypeFilterChange}
         searchMatchCount={searchMatchCount}
+        onSelectSearchResults={onSelectSearchResults}
       />
       <MetricsBar
         selectedCount={selectedCount}
