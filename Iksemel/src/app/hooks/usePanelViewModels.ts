@@ -7,6 +7,7 @@ import type { FilterPanelState } from "@/app/hooks/useFilterPanelState";
 import type { TemplateLibraryResult } from "@/app/hooks/useTemplateLibrary";
 import type { ValidationWarning } from "@engine/analysis";
 import type { DerivedOutputs } from "@/app/hooks/useDerivedOutputs";
+import type { ConfigSnapshot } from "@engine/history";
 
 interface DataEstimate {
   readonly estimatedKb: number;
@@ -77,6 +78,8 @@ interface RightTabsViewModelInput {
   readonly reportXml: string;
   readonly filterValues: AppState["filterValues"];
   readonly schema: AppState["schema"];
+  readonly currentSnapshot: ConfigSnapshot;
+  readonly onRestoreSnapshot: (snapshot: ConfigSnapshot) => void;
 }
 
 export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanelProps {
@@ -210,6 +213,8 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     reportXml,
     filterValues,
     schema,
+    currentSnapshot,
+    onRestoreSnapshot,
   } = input;
 
   return useMemo(() => ({
@@ -237,6 +242,8 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     actions,
     filterValues,
     schema,
+    currentSnapshot,
+    onRestoreSnapshot,
   }), [
     activeTab,
     format,
@@ -262,5 +269,7 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     reportXml,
     filterValues,
     schema,
+    currentSnapshot,
+    onRestoreSnapshot,
   ]);
 }

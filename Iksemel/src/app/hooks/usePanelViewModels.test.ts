@@ -138,6 +138,8 @@ describe("usePanelViewModels", () => {
       reportXml: "<report/>",
       filterValues: INITIAL_STATE.filterValues,
       schema: INITIAL_STATE.schema,
+      currentSnapshot: { selection: {}, filterValues: {}, columns: [], format: "xlsx", timestamp: 0 },
+      onRestoreSnapshot: vi.fn(),
     };
 
     const { result, rerender } = renderHook(

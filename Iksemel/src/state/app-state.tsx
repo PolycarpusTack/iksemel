@@ -110,7 +110,7 @@ export interface AppState {
   readonly policyViolations: readonly PolicyViolation[];
 
   // UI
-  readonly activeTab: "design" | "xslt" | "filter" | "filters" | "report" | "package" | "templates" | "guide";
+  readonly activeTab: "design" | "xslt" | "filter" | "filters" | "report" | "package" | "templates" | "history" | "guide";
   readonly searchQuery: string;
   readonly focusedNodeId: string | null;
 }
@@ -156,6 +156,7 @@ export type AppAction =
   | { readonly type: "SET_FOCUSED_NODE"; readonly nodeId: string | null }
   | { readonly type: "SET_DOCUMENT_TEMPLATE"; readonly template: DocumentTemplate | null }
   | { readonly type: "CLEAR_DOCUMENT_TEMPLATE" }
+  | { readonly type: "RESTORE_SNAPSHOT"; readonly selection: SelectionState; readonly filterValues: FilterValuesState; readonly columns: readonly ColumnDefinition[]; readonly format: ExportFormat }
   | { readonly type: "RESET" };
 
 // ---------------------------------------------------------------------------
@@ -511,6 +512,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case "SET_FOCUSED_NODE":
       return { ...state, focusedNodeId: action.nodeId };
+
+    case "RESTORE_SNAPSHOT":
+      return {
+        ...state,
+        selection: action.selection,
+        filterValues: action.filterValues,
+        columns: action.columns,
+        format: action.format,
+      };
 
     // ----- Reset -----
 

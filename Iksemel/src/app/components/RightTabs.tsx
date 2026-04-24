@@ -1,5 +1,5 @@
 import { Suspense, lazy, memo, type ReactNode } from "react";
-import { TabContainer } from "@components/shared";
+import { TabContainer, HistoryPanel } from "@components/shared";
 import {
   ExportDesignTab,
   ColumnConfig,
@@ -11,6 +11,7 @@ import type { AppState } from "@/state";
 import type { AppActions } from "@/app/hooks/useAppActions";
 import type { ColumnDefinition, RepeatingElement, SelectedLeaf } from "@/types";
 import type { TemplateLibraryResult } from "@/app/hooks/useTemplateLibrary";
+import type { ConfigSnapshot } from "@engine/history";
 import { recordRender } from "@/app/perf/perf-tracker";
 import styles from "../../App.module.css";
 
@@ -62,6 +63,8 @@ export interface RightTabsProps {
   readonly actions: AppActions;
   readonly filterValues: AppState["filterValues"];
   readonly schema: AppState["schema"];
+  readonly currentSnapshot: ConfigSnapshot;
+  readonly onRestoreSnapshot: (snapshot: ConfigSnapshot) => void;
 }
 
 export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
@@ -91,6 +94,8 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
     actions,
     filterValues,
     schema,
+    currentSnapshot,
+    onRestoreSnapshot,
   } = props;
 
   return (
@@ -204,6 +209,13 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
               onImportTemplate={(json) => templateLibrary.handleImportTemplate(json)}
             />
           </TabSuspense>
+        )}
+
+        {activeTab === "history" && (
+          <HistoryPanel
+            currentSnapshot={currentSnapshot}
+            onRestore={onRestoreSnapshot}
+          />
         )}
 
         {activeTab === "guide" && (

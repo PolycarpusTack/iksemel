@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
 import type { SchemaNode, ColumnDefinition } from "@/types";
 import { selectByIds, selectRange, selectByType } from "@engine/selection";
+import { pushRecent } from "@engine/history";
+import type { ConfigSnapshot } from "@engine/history";
 import { analyzeFilterEfficiency, searchSchema } from "@engine/analysis";
 import type { EfficiencyScore } from "@engine/analysis";
 import { SizeWarningModal } from "@components/export/SizeWarningModal";
@@ -38,6 +40,7 @@ const TABS = [
   { id: "report", label: "Report" },
   { id: "package", label: "Package" },
   { id: "templates", label: "Templates" },
+  { id: "history", label: "History" },
   { id: "guide", label: "Guide" },
 ] as const;
 
@@ -270,6 +273,28 @@ export function App() {
     actions.setColumns([...columns, newCol]);
   }, [columns, selectedLeaves, actions]);
 
+  const currentSnapshot = useMemo<ConfigSnapshot>(() => ({
+    selection,
+    filterValues,
+    columns,
+    format,
+    timestamp: Date.now(),
+  }), [selection, filterValues, columns, format]);
+
+  const handleRestoreSnapshot = useCallback((snapshot: ConfigSnapshot) => {
+    dispatch({ type: "RESTORE_SNAPSHOT", selection: snapshot.selection, filterValues: snapshot.filterValues, columns: snapshot.columns, format: snapshot.format });
+  }, [dispatch]);
+
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!schema) return;
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = setTimeout(() => {
+      pushRecent({ selection, filterValues, columns, format, timestamp: Date.now() });
+    }, 2000);
+    return () => { if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current); };
+  }, [selection, schema, filterValues, columns, format]);
+
   const leftPanelViewModel = useLeftPanelViewModel({
     schema,
     selection,
@@ -330,6 +355,8 @@ export function App() {
     reportXml,
     filterValues,
     schema,
+    currentSnapshot,
+    onRestoreSnapshot: handleRestoreSnapshot,
   });
 
   const handleExportWithWarning = useCallback((exportFn: () => void) => {
