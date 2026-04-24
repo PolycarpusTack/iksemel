@@ -37,9 +37,26 @@ function findNodePath(nodeId: string, nodes: readonly SchemaNode[]): readonly st
   return [];
 }
 
+function findBreadcrumb(
+  nodeId: string,
+  nodes: readonly SchemaNode[],
+  path: readonly { id: string; name: string }[] = [],
+): readonly { id: string; name: string }[] | null {
+  for (const node of nodes) {
+    const current = [...path, { id: node.id, name: node.name }];
+    if (node.id === nodeId) return current;
+    if (node.children.length > 0) {
+      const found = findBreadcrumb(nodeId, node.children, current);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 export interface FilterPanelState {
   readonly focusedNode: SchemaNode | null;
   readonly focusedNodePath: readonly string[];
+  readonly focusedBreadcrumb: readonly { readonly id: string; readonly name: string }[];
   readonly filterCount: number;
   readonly filteredNodeIds: ReadonlySet<string>;
   handleFocusNode(nodeId: string): void;
@@ -72,6 +89,11 @@ export function useFilterPanelState(input: FilterPanelInput): FilterPanelState {
     return findNodePath(focusedNodeId, schema);
   }, [focusedNodeId, schema]);
 
+  const focusedBreadcrumb = useMemo(() => {
+    if (!focusedNodeId || !schema) return [];
+    return findBreadcrumb(focusedNodeId, schema) ?? [];
+  }, [focusedNodeId, schema]);
+
   const filterCount = useMemo(() => Object.keys(filterValues).length, [filterValues]);
 
   const filteredNodeIds = useMemo(() => new Set(Object.keys(filterValues)), [filterValues]);
@@ -95,6 +117,7 @@ export function useFilterPanelState(input: FilterPanelInput): FilterPanelState {
   return {
     focusedNode,
     focusedNodePath,
+    focusedBreadcrumb,
     filterCount,
     filteredNodeIds,
     handleFocusNode,

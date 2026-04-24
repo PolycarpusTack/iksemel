@@ -33,6 +33,7 @@ function createFilterPanelState() {
   return {
     focusedNode: null,
     focusedNodePath: [],
+    focusedBreadcrumb: [],
     filterCount: 0,
     filteredNodeIds: new Set<string>(),
     handleFocusNode: vi.fn(),

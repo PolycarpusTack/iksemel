@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { SchemaTree, TreeToolbar, MetricsBar, AntiPatternWarning } from "@components/tree";
+import { SchemaTree, TreeToolbar, MetricsBar, AntiPatternWarning, Breadcrumb } from "@components/tree";
 import { FilterPanel } from "@components/filter";
 import type { AppState } from "@/state";
 import type { AppActions } from "@/app/hooks/useAppActions";
@@ -107,6 +107,10 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         searchMatchCount={searchMatchCount}
         onSelectSearchResults={onSelectSearchResults}
         onSelectByType={onSelectByType}
+      />
+      <Breadcrumb
+        segments={filterPanel.focusedBreadcrumb}
+        onNavigate={filterPanel.handleFocusNode}
       />
       <MetricsBar
         selectedCount={selectedCount}
