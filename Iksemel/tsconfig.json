@@ -35,5 +35,6 @@
       "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src", "vite-env.d.ts"]
+  "include": ["src", "vite-env.d.ts"],
+  "exclude": ["electron", "node_modules", "out", "dist", "dist-electron"]
 }
