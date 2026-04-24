@@ -19,6 +19,7 @@ interface TreeToolbarProps {
   onTypeFilterChange: (type: string | null) => void;
   searchMatchCount?: number | null;
   onSelectSearchResults?: () => void;
+  onSelectByType?: (typeName: string) => void;
 }
 
 /**
@@ -39,6 +40,7 @@ export function TreeToolbar({
   onTypeFilterChange,
   searchMatchCount,
   onSelectSearchResults,
+  onSelectByType,
 }: TreeToolbarProps) {
   const handleSearchInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +121,19 @@ export function TreeToolbar({
             {t}
           </button>
         ))}
+        {onSelectByType && (
+          <select
+            className={styles["selectByType"]}
+            value=""
+            onChange={(e) => { if (e.target.value) onSelectByType(e.target.value); }}
+            aria-label="Select all fields of type"
+          >
+            <option value="" disabled>Select by type…</option>
+            {TYPE_FILTERS.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

@@ -106,6 +106,7 @@ export const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         onTypeFilterChange={onTypeFilterChange}
         searchMatchCount={searchMatchCount}
         onSelectSearchResults={onSelectSearchResults}
+        onSelectByType={onSelectByType}
       />
       <MetricsBar
         selectedCount={selectedCount}
