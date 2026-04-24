@@ -6,6 +6,7 @@ import {
   StylePanel,
   PreviewTable,
 } from "@components/export";
+import { FilterSummaryTab } from "@components/filter";
 import type { AppState } from "@/state";
 import type { AppActions } from "@/app/hooks/useAppActions";
 import type { ColumnDefinition, RepeatingElement, SelectedLeaf } from "@/types";
@@ -59,6 +60,8 @@ export interface RightTabsProps {
   readonly reportXml: string;
   readonly templateLibrary: TemplateLibraryResult;
   readonly actions: AppActions;
+  readonly filterValues: AppState["filterValues"];
+  readonly schema: AppState["schema"];
 }
 
 export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
@@ -86,6 +89,8 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
     reportXml,
     templateLibrary,
     actions,
+    filterValues,
+    schema,
   } = props;
 
   return (
@@ -149,6 +154,16 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
               language="xml"
             />
           </TabSuspense>
+        )}
+
+        {activeTab === "filters" && (
+          <FilterSummaryTab
+            filterValues={filterValues}
+            schema={schema}
+            onRemoveFilter={(nodeId) => actions.removeFilter(nodeId)}
+            onClearAll={() => actions.clearFilters()}
+            onFocusNode={(nodeId) => actions.focusNode(nodeId)}
+          />
         )}
 
         {activeTab === "report" && (

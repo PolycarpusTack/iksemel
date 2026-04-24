@@ -22,6 +22,9 @@ export interface AppActions {
   setStyle(style: Partial<StyleConfig>): void;
   setStylePreset(key: StylePresetKey): void;
   setMetadata(metadata: Partial<AppState["metadata"]>): void;
+  removeFilter(nodeId: string): void;
+  clearFilters(): void;
+  focusNode(nodeId: string | null): void;
 }
 
 export function useAppActions(dispatch: Dispatch<AppAction>): AppActions {
@@ -97,6 +100,18 @@ export function useAppActions(dispatch: Dispatch<AppAction>): AppActions {
     dispatch({ type: "SET_METADATA", metadata });
   }, [dispatch]);
 
+  const removeFilter = useCallback((nodeId: string) => {
+    dispatch({ type: "REMOVE_FILTER_VALUE", nodeId });
+  }, [dispatch]);
+
+  const clearFilters = useCallback(() => {
+    dispatch({ type: "CLEAR_ALL_FILTERS" });
+  }, [dispatch]);
+
+  const focusNode = useCallback((nodeId: string | null) => {
+    dispatch({ type: "SET_FOCUSED_NODE", nodeId });
+  }, [dispatch]);
+
   return useMemo(() => ({
     setSearchQuery,
     expandAll,
@@ -116,6 +131,9 @@ export function useAppActions(dispatch: Dispatch<AppAction>): AppActions {
     setStyle,
     setStylePreset,
     setMetadata,
+    removeFilter,
+    clearFilters,
+    focusNode,
   }), [
     setSearchQuery,
     expandAll,
@@ -135,5 +153,8 @@ export function useAppActions(dispatch: Dispatch<AppAction>): AppActions {
     setStyle,
     setStylePreset,
     setMetadata,
+    removeFilter,
+    clearFilters,
+    focusNode,
   ]);
 }

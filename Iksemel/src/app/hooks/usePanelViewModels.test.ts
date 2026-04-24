@@ -23,6 +23,9 @@ function createActions() {
     setStyle: vi.fn(),
     setStylePreset: vi.fn(),
     setMetadata: vi.fn(),
+    removeFilter: vi.fn(),
+    clearFilters: vi.fn(),
+    focusNode: vi.fn(),
   };
 }
 
@@ -125,6 +128,8 @@ describe("usePanelViewModels", () => {
       filterXml: "<filter/>",
       xsltOutput: "<xsl:stylesheet/>",
       reportXml: "<report/>",
+      filterValues: INITIAL_STATE.filterValues,
+      schema: INITIAL_STATE.schema,
     };
 
     const { result, rerender } = renderHook(

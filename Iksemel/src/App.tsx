@@ -33,6 +33,7 @@ const TABS = [
   { id: "design", label: "Design" },
   { id: "xslt", label: "XSLT" },
   { id: "filter", label: "Filter" },
+  { id: "filters", label: "Filters" },
   { id: "report", label: "Report" },
   { id: "package", label: "Package" },
   { id: "templates", label: "Templates" },
@@ -242,6 +243,8 @@ export function App() {
     filterXml,
     xsltOutput,
     reportXml,
+    filterValues,
+    schema,
   });
 
   const handleExportWithWarning = useCallback((exportFn: () => void) => {

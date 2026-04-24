@@ -68,6 +68,8 @@ interface RightTabsViewModelInput {
   readonly filterXml: string;
   readonly xsltOutput: string;
   readonly reportXml: string;
+  readonly filterValues: AppState["filterValues"];
+  readonly schema: AppState["schema"];
 }
 
 export function useLeftPanelViewModel(input: LeftPanelViewModelInput): LeftPanelProps {
@@ -178,6 +180,8 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     filterXml,
     xsltOutput,
     reportXml,
+    filterValues,
+    schema,
   } = input;
 
   return useMemo(() => ({
@@ -203,6 +207,8 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     reportXml,
     templateLibrary,
     actions,
+    filterValues,
+    schema,
   }), [
     activeTab,
     format,
@@ -226,5 +232,7 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     filterXml,
     xsltOutput,
     reportXml,
+    filterValues,
+    schema,
   ]);
 }
