@@ -10,7 +10,7 @@ function createWindow(): void {
     show: false,
     title: "XML Filter & Export Builder",
     webPreferences: {
-      preload: join(__dirname, "../preload/index.js"),
+      preload: join(__dirname, "../preload/index.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
