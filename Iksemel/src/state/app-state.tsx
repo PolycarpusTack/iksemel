@@ -110,7 +110,7 @@ export interface AppState {
   readonly policyViolations: readonly PolicyViolation[];
 
   // UI
-  readonly activeTab: "design" | "xslt" | "filter" | "filters" | "report" | "package" | "templates" | "history" | "guide";
+  readonly activeTab: "design" | "xslt" | "filter" | "filters" | "report" | "package" | "templates" | "history" | "compare" | "guide";
   readonly searchQuery: string;
   readonly focusedNodeId: string | null;
 }

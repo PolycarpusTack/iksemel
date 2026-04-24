@@ -138,6 +138,7 @@ describe("usePanelViewModels", () => {
       reportXml: "<report/>",
       filterValues: INITIAL_STATE.filterValues,
       schema: INITIAL_STATE.schema,
+      documentTemplate: INITIAL_STATE.documentTemplate,
       currentSnapshot: { selection: {}, filterValues: {}, columns: [], format: "xlsx", timestamp: 0 },
       onRestoreSnapshot: vi.fn(),
     };

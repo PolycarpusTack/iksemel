@@ -41,6 +41,7 @@ const TABS = [
   { id: "package", label: "Package" },
   { id: "templates", label: "Templates" },
   { id: "history", label: "History" },
+  { id: "compare", label: "Compare" },
   { id: "guide", label: "Guide" },
 ] as const;
 
@@ -355,6 +356,7 @@ export function App() {
     reportXml,
     filterValues,
     schema,
+    documentTemplate,
     currentSnapshot,
     onRestoreSnapshot: handleRestoreSnapshot,
   });

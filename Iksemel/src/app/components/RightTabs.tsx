@@ -5,6 +5,7 @@ import {
   ColumnConfig,
   StylePanel,
   PreviewTable,
+  FormatCompare,
 } from "@components/export";
 import { FilterSummaryTab } from "@components/filter";
 import type { AppState } from "@/state";
@@ -63,6 +64,7 @@ export interface RightTabsProps {
   readonly actions: AppActions;
   readonly filterValues: AppState["filterValues"];
   readonly schema: AppState["schema"];
+  readonly documentTemplate: AppState["documentTemplate"];
   readonly currentSnapshot: ConfigSnapshot;
   readonly onRestoreSnapshot: (snapshot: ConfigSnapshot) => void;
 }
@@ -94,6 +96,7 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
     actions,
     filterValues,
     schema,
+    documentTemplate,
     currentSnapshot,
     onRestoreSnapshot,
   } = props;
@@ -209,6 +212,18 @@ export const RightTabs = memo(function RightTabs(props: RightTabsProps) {
               onImportTemplate={(json) => templateLibrary.handleImportTemplate(json)}
             />
           </TabSuspense>
+        )}
+
+        {activeTab === "compare" && (
+          <FormatCompare
+            columns={columns}
+            rowSource={rowSource}
+            style={style}
+            groupBy={groupBy}
+            sortBy={sortBy}
+            title={title || metadata.name || "Export"}
+            documentTemplate={documentTemplate}
+          />
         )}
 
         {activeTab === "history" && (

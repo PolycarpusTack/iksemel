@@ -78,6 +78,7 @@ interface RightTabsViewModelInput {
   readonly reportXml: string;
   readonly filterValues: AppState["filterValues"];
   readonly schema: AppState["schema"];
+  readonly documentTemplate: AppState["documentTemplate"];
   readonly currentSnapshot: ConfigSnapshot;
   readonly onRestoreSnapshot: (snapshot: ConfigSnapshot) => void;
 }
@@ -213,6 +214,7 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     reportXml,
     filterValues,
     schema,
+    documentTemplate,
     currentSnapshot,
     onRestoreSnapshot,
   } = input;
@@ -242,6 +244,7 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     actions,
     filterValues,
     schema,
+    documentTemplate,
     currentSnapshot,
     onRestoreSnapshot,
   }), [
@@ -269,6 +272,7 @@ export function useRightTabsViewModel(input: RightTabsViewModelInput): RightTabs
     reportXml,
     filterValues,
     schema,
+    documentTemplate,
     currentSnapshot,
     onRestoreSnapshot,
   ]);
