@@ -86,6 +86,25 @@ export function ColumnConfig({ columns, selectedLeaves, orphanedColumns = [], on
     onColumnsChange([]);
   }, [onColumnsChange]);
 
+  const smartOrder = useCallback(() => {
+    const TYPE_PRIORITY: Record<string, number> = {
+      integer: 1, int: 1, long: 1, short: 1, positiveInteger: 1, nonNegativeInteger: 1,
+      date: 2, dateTime: 2, time: 2, gYear: 2, gMonth: 2, gDay: 2,
+      duration: 3,
+      boolean: 4,
+      decimal: 5, float: 5, double: 5,
+      string: 6, normalizedString: 6, token: 6,
+    };
+    const sorted = [...columns].sort((a, b) => {
+      const aLeaf = selectedLeaves.find((l) => l.id === a.id);
+      const bLeaf = selectedLeaves.find((l) => l.id === b.id);
+      const aPriority = TYPE_PRIORITY[aLeaf?.typeName ?? "string"] ?? 6;
+      const bPriority = TYPE_PRIORITY[bLeaf?.typeName ?? "string"] ?? 6;
+      return aPriority - bPriority;
+    });
+    onColumnsChange(sorted);
+  }, [columns, selectedLeaves, onColumnsChange]);
+
   return (
     <div className={styles["container"]}>
       <div className={styles["toolbar"]}>
@@ -94,6 +113,9 @@ export function ColumnConfig({ columns, selectedLeaves, orphanedColumns = [], on
         </Button>
         <Button size="sm" variant="ghost" onClick={clearAll} disabled={columns.length === 0}>
           Clear
+        </Button>
+        <Button size="sm" variant="ghost" onClick={smartOrder} disabled={columns.length < 2} aria-label="Reorder columns by type priority">
+          Smart Order
         </Button>
       </div>
 
