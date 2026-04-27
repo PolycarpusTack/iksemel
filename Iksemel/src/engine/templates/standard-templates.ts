@@ -21,7 +21,7 @@ const dailySchedule: TemplateSpec = {
   tags: ["schedule", "daily", "channel", "programme", "time-slot"],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  author: "XFEB",
+  author: "Iksemel",
   thumbnail: "Grid view of daily programme schedule grouped by channel",
 
   config: {
@@ -68,7 +68,7 @@ const epgDelivery: TemplateSpec = {
   tags: ["epg", "programme-guide", "synopsis", "rating", "language"],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  author: "XFEB",
+  author: "Iksemel",
   thumbnail: "Listing of EPG entries with synopsis and broadcast metadata",
 
   config: {
@@ -117,7 +117,7 @@ const rightsOverview: TemplateSpec = {
   tags: ["rights", "licence", "territory", "rights-holder", "contract"],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  author: "XFEB",
+  author: "Iksemel",
   thumbnail: "Rights table grouped by rights holder with licence windows",
 
   config: {
@@ -166,7 +166,7 @@ const complianceReport: TemplateSpec = {
   tags: ["compliance", "rating", "content-warnings", "regulatory", "broadcast"],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  author: "XFEB",
+  author: "Iksemel",
   thumbnail: "Compliance table sorted by broadcast date with ratings and warnings",
 
   config: {
@@ -213,7 +213,7 @@ const commercialBreaks: TemplateSpec = {
   tags: ["commercial", "break", "advertiser", "spot", "scheduling"],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  author: "XFEB",
+  author: "Iksemel",
   thumbnail: "Commercial break listing grouped by break position with spot details",
 
   config: {

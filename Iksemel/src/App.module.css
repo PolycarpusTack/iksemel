@@ -31,6 +31,13 @@
   color: var(--color-text-primary);
 }
 
+.version {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-ghost);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0;
+}
+
 .subtitle {
   font-size: var(--font-size-base);
   color: var(--color-text-ghost);

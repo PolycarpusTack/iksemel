@@ -1,8 +1,8 @@
 {
-  "name": "xfeb",
+  "name": "iksemel",
   "version": "0.1.0",
   "main": "out/main/index.js",
-  "description": "XML Filter & Export Builder — Build optimised XML filters and XSLT transformations for WHATS'ON broadcast exports",
+  "description": "Iksemel — Build optimised XML filters and XSLT transformations for WHATS'ON broadcast exports",
   "private": true,
   "type": "module",
   "scripts": {

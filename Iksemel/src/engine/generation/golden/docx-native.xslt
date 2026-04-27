@@ -42,6 +42,7 @@
 
         <!-- Data rows -->
         <xsl:for-each select="//Slot">
+
           <w:tr>
             <w:tc>
               <w:p><w:pPr><w:jc w:val="left"/></w:pPr><w:r><w:t><xsl:value-of select="SlotDate" /></w:t></w:r></w:p>

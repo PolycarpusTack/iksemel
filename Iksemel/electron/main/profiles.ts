@@ -22,7 +22,7 @@ function requireEncryption(): void {
 
 function defaultXfebDir(): string {
   const home = process.env["HOME"] ?? process.env["USERPROFILE"] ?? ".";
-  return path.join(home, ".xfeb");
+  return path.join(home, ".iksemel");
 }
 
 function profilesPath(dir: string): string {

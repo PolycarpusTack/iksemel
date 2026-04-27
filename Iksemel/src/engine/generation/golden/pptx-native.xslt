@@ -47,6 +47,7 @@
 
         <!-- Data rows -->
         <xsl:for-each select="//Slot">
+
           <a:tr h="370840">
           <a:tc>
             <a:txBody>

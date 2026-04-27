@@ -12,14 +12,14 @@ vi.mock("electron", () => ({
     decryptString: vi.fn((b: Buffer) => b.toString().replace(/^enc:/, "")),
   },
   app: {
-    getPath: vi.fn().mockReturnValue("/tmp/xfeb-test"),
+    getPath: vi.fn().mockReturnValue("/tmp/iksemel-test"),
   },
 }));
 
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "xfeb-profiles-"));
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "iksemel-profiles-"));
 });
 
 afterEach(() => {

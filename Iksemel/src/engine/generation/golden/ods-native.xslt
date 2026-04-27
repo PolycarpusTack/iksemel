@@ -24,6 +24,7 @@
         </table:table-row>
         <!-- Data rows -->
         <xsl:for-each select="//Slot">
+
           <table:table-row>
             <table:table-cell office:value-type="string"><text:p><xsl:value-of select="SlotDate" /></text:p></table:table-cell>
             <table:table-cell office:value-type="string"><text:p><xsl:value-of select="StartTime" /></text:p></table:table-cell>

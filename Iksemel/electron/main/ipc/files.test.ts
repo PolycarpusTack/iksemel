@@ -34,7 +34,7 @@ describe("registerFilesHandlers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     ipcMain = makeIpcMain();
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "xfeb-files-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "iksemel-files-"));
     registerFilesHandlers(ipcMain as any);
   });
 

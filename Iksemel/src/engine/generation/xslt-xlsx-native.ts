@@ -99,7 +99,7 @@ ${sharedStringEntries}
       <xfeb:Metadata>
         <xfeb:Title>${safeTitle}</xfeb:Title>
         <xfeb:ColumnCount>${colCount}</xfeb:ColumnCount>
-        <xfeb:Author>${escXml(style.name || "XFEB")}</xfeb:Author>
+        <xfeb:Author>${escXml(style.name || "Iksemel")}</xfeb:Author>
         <xfeb:HeaderStyleIndex>1</xfeb:HeaderStyleIndex>
       </xfeb:Metadata>
 
