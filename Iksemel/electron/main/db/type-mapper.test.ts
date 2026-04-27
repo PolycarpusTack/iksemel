@@ -64,7 +64,7 @@ describe("mapDbTypeToXsdType — postgres", () => {
   it.each([
     ["BYTEA", null],
     ["OID", null],
-  ])("maps %s → null (excluded)", (dbType, expected) => {
+  ])("maps %s → null (excluded)", (dbType, _expected) => {
     expect(mapDbTypeToXsdType(dbType, pg)).toBeNull();
   });
 
@@ -119,7 +119,7 @@ describe("mapDbTypeToXsdType — oracle", () => {
     ["BLOB", null],
     ["RAW", null],
     ["LONG RAW", null],
-  ])("maps %s → null (excluded)", (dbType, expected) => {
+  ])("maps %s → null (excluded)", (dbType, _expected) => {
     expect(mapDbTypeToXsdType(dbType, ora)).toBeNull();
   });
 });

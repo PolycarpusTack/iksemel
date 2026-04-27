@@ -10,6 +10,7 @@ import type {
 } from "../../preload/api";
 
 export class PgDriver {
+  readonly engine = "postgres" as const;
   private pool: Pool | null = null;
   private schemas: string[] = ["public"];
 
@@ -71,7 +72,9 @@ export class PgDriver {
 
   async getColumns(tableId: string): Promise<ColumnInfo[]> {
     const pool = this.requirePool();
-    const [schema, tableName] = tableId.split(".");
+    const parts = tableId.split(".");
+    if (parts.length < 2 || !parts[0] || !parts[1]) throw new Error(`Invalid tableId: ${tableId}`);
+    const [schema, tableName] = parts as [string, string];
     const result = await pool.query(
       `SELECT
          c.column_name,
@@ -218,7 +221,9 @@ export class PgDriver {
 
   async getRowCount(tableId: string): Promise<number> {
     const pool = this.requirePool();
-    const [schema, table] = tableId.split(".");
+    const parts = tableId.split(".");
+    if (parts.length < 2 || !parts[0] || !parts[1]) throw new Error(`Invalid tableId: ${tableId}`);
+    const [schema, table] = parts as [string, string];
     const result = await pool.query(
       `SELECT COUNT(*)::text AS count FROM ${this.quoteIdent(schema)}.${this.quoteIdent(table)}`,
     );

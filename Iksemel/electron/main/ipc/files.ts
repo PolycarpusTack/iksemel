@@ -18,6 +18,7 @@ export function registerFilesHandlers(ipcMain: IpcMain): void {
   ipcMain.handle(
     "files:savePackage",
     async (_event, files: PackageFiles, outputDir: string): Promise<SaveResult> => {
+      if (!path.isAbsolute(outputDir)) throw new Error(`outputDir must be absolute: ${outputDir}`);
       const resolvedBase = path.resolve(outputDir);
       await fs.promises.mkdir(resolvedBase, { recursive: true });
       const savedPaths: string[] = [];

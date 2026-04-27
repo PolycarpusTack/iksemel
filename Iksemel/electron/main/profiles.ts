@@ -32,7 +32,9 @@ function profilesPath(dir: string): string {
 async function readStoredProfiles(dir: string): Promise<StoredProfile[]> {
   try {
     const raw = await fs.promises.readFile(profilesPath(dir), "utf8");
-    return JSON.parse(raw) as StoredProfile[];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) throw new Error("profiles.json is not an array");
+    return parsed as StoredProfile[];
   } catch (err: unknown) {
     if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
     throw err;

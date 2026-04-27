@@ -21,9 +21,10 @@ export function registerConnectionHandlers(ipcMain: IpcMain): void {
     async (_event, profile: ConnectionProfileInput): Promise<TestResult> => {
       const driver = profile.engine === "postgres" ? new PgDriver() : new OracleDriver();
       const start = Date.now();
+      let connected = false;
       try {
         await driver.connect(profile);
-        await driver.disconnect();
+        connected = true;
         return { success: true, latencyMs: Date.now() - start };
       } catch (err: unknown) {
         return {
@@ -31,6 +32,8 @@ export function registerConnectionHandlers(ipcMain: IpcMain): void {
           latencyMs: Date.now() - start,
           error: err instanceof Error ? err.message : String(err),
         };
+      } finally {
+        if (connected) await driver.disconnect().catch(() => undefined);
       }
     },
   );

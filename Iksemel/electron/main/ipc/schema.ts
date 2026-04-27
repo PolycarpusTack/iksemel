@@ -49,9 +49,7 @@ export function registerSchemaHandlers(ipcMain: IpcMain): void {
         }),
       );
 
-      // Determine engine from driver constructor name
-      const engine: DbEngine =
-        driver.constructor.name === "PgDriver" ? "postgres" : "oracle";
+      const engine: DbEngine = driver.engine;
 
       return buildSchemaTree(tables, columnsMap, fks, options, engine);
     },

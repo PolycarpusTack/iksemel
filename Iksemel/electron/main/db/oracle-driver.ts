@@ -20,6 +20,7 @@ export class OracleClientMissingError extends Error {
 }
 
 export class OracleDriver {
+  readonly engine = "oracle" as const;
   private connection: Connection | null = null;
   private schemas: string[] = [];
 
@@ -93,7 +94,9 @@ export class OracleDriver {
 
   async getColumns(tableId: string): Promise<ColumnInfo[]> {
     const conn = this.requireConnection();
-    const [schema, tableName] = tableId.split(".");
+    const parts = tableId.split(".");
+    if (parts.length < 2 || !parts[0] || !parts[1]) throw new Error(`Invalid tableId: ${tableId}`);
+    const [schema, tableName] = parts as [string, string];
     const result = await conn.execute<{
       COLUMN_NAME: string;
       DATA_TYPE: string;
@@ -267,7 +270,9 @@ export class OracleDriver {
 
   async getRowCount(tableId: string): Promise<number> {
     const conn = this.requireConnection();
-    const [schema, table] = tableId.split(".");
+    const parts = tableId.split(".");
+    if (parts.length < 2 || !parts[0] || !parts[1]) throw new Error(`Invalid tableId: ${tableId}`);
+    const [schema, table] = parts as [string, string];
     const result = await conn.execute<{ CNT: number }>(
       `SELECT COUNT(*) AS cnt FROM ${this.quoteIdent(schema.toUpperCase())}.${this.quoteIdent(table.toUpperCase())}`,
       {},

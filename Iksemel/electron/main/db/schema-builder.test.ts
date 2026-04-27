@@ -6,7 +6,6 @@ import type {
   ColumnInfo,
   ForeignKeyRelation,
   SchemaTreeOptions,
-  SchemaNode,
 } from "../../preload/api";
 
 const defaultOptions: SchemaTreeOptions = {
