@@ -20,11 +20,6 @@ let tmpDir: string;
 
 beforeEach(() => {
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "xfeb-profiles-"));
-  // Re-point the module to use the temp dir
-  vi.doMock("../main/profiles", async () => {
-    const mod = await import("./profiles");
-    return mod;
-  });
 });
 
 afterEach(() => {
@@ -121,5 +116,21 @@ describe("profiles", () => {
     await setFavourite(created.id, false, tmpDir);
     const after = await loadProfiles(tmpDir);
     expect(after[0].isFavourite).toBe(false);
+  });
+
+  it("getPassword returns decrypted password", async () => {
+    const { saveProfile, getPassword } = await import("./profiles");
+    const created = await saveProfile({
+      label: "PW Test",
+      engine: "postgres" as const,
+      host: "h",
+      port: 5432,
+      database: "d",
+      username: "u",
+      password: "my-secret-pw",
+      schemas: ["public"],
+    }, tmpDir);
+    const pw = await getPassword(created.id, tmpDir);
+    expect(pw).toBe("my-secret-pw");
   });
 });
