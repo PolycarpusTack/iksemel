@@ -119,25 +119,25 @@ export interface RestrictionFacets {
 
 // Inline copies of DataProvider stats types from src/engine/data-provider/types.ts
 export interface SampleValue {
-  value: string;
-  count: number;
+  readonly value: string;
+  readonly count: number;
 }
 
 export interface FieldSampleData {
-  fieldId: string;
-  fieldPath: string;
-  values: SampleValue[];
-  totalCount: number;
-  distinctCount: number;
-  nullCount: number;
+  readonly fieldId: string;
+  readonly fieldPath: string;
+  readonly values: readonly SampleValue[];
+  readonly totalCount: number;
+  readonly distinctCount: number;
+  readonly nullCount: number;
 }
 
 export interface CardinalityStats {
-  elementPath: string;
-  avgCount: number;
-  minCount: number;
-  maxCount: number;
-  sampleSize: number;
+  readonly elementPath: string;
+  readonly avgCount: number;
+  readonly minCount: number;
+  readonly maxCount: number;
+  readonly sampleSize: number;
 }
 
 export interface PackageFiles {
