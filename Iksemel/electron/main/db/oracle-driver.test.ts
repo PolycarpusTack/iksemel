@@ -120,3 +120,32 @@ describe("OracleDriver.disconnect", () => {
     expect(mockClose).toHaveBeenCalledOnce();
   });
 });
+
+describe("OracleDriver.fetchSampleStats", () => {
+  it("returns sample stats for a column", async () => {
+    mockExecute.mockResolvedValueOnce({ rows: [] }); // ping
+    mockExecute.mockResolvedValueOnce({
+      rows: [{ TOTAL_COUNT: 107, DISTINCT_COUNT: 50, NULL_COUNT: 2 }],
+    });
+    const driver = new OracleDriver();
+    await driver.connect(profile);
+    const stats = await driver.fetchSampleStats(["hr.employees.employee_id"]);
+    expect(stats).toHaveLength(1);
+    expect(stats[0].fieldId).toBe("hr.employees.employee_id");
+    expect(stats[0].totalCount).toBe(107);
+    expect(stats[0].distinctCount).toBe(50);
+    expect(stats[0].nullCount).toBe(2);
+    expect(stats[0].values).toHaveLength(0);
+  });
+
+  it("returns empty stats on query failure", async () => {
+    mockExecute.mockResolvedValueOnce({ rows: [] }); // ping
+    mockExecute.mockRejectedValueOnce(new Error("ORA-00942: table or view does not exist"));
+    const driver = new OracleDriver();
+    await driver.connect(profile);
+    const stats = await driver.fetchSampleStats(["hr.employees.employee_id"]);
+    expect(stats).toHaveLength(1);
+    expect(stats[0].totalCount).toBe(0);
+    expect(stats[0].values).toHaveLength(0);
+  });
+});

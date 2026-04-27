@@ -224,9 +224,9 @@ export class OracleDriver {
           NULL_COUNT: number;
         }>(
           `SELECT COUNT(*) AS total_count,
-                  COUNT(DISTINCT ${column}) AS distinct_count,
-                  SUM(CASE WHEN ${column} IS NULL THEN 1 ELSE 0 END) AS null_count
-           FROM ${schema}.${table} SAMPLE(10)`,
+                  COUNT(DISTINCT ${this.quoteIdent(column)}) AS distinct_count,
+                  SUM(CASE WHEN ${this.quoteIdent(column)} IS NULL THEN 1 ELSE 0 END) AS null_count
+           FROM ${this.quoteIdent(schema)}.${this.quoteIdent(table)} SAMPLE(10)`,
           {},
           { outFormat: oracledb.OUT_FORMAT_OBJECT },
         );
@@ -269,11 +269,15 @@ export class OracleDriver {
     const conn = this.requireConnection();
     const [schema, table] = tableId.split(".");
     const result = await conn.execute<{ CNT: number }>(
-      `SELECT COUNT(*) AS cnt FROM ${schema.toUpperCase()}.${table.toUpperCase()}`,
+      `SELECT COUNT(*) AS cnt FROM ${this.quoteIdent(schema.toUpperCase())}.${this.quoteIdent(table.toUpperCase())}`,
       {},
       { outFormat: oracledb.OUT_FORMAT_OBJECT },
     );
     return result.rows?.[0]?.CNT ?? 0;
+  }
+
+  private quoteIdent(name: string): string {
+    return '"' + name.replace(/"/g, '""') + '"';
   }
 
   private requireConnection(): Connection {
