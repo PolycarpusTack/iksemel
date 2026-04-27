@@ -60,8 +60,11 @@ export function registerConnectionHandlers(ipcMain: IpcMain): void {
     async (_event, connectionId: string): Promise<void> => {
       const driver = registry.get(connectionId);
       if (!driver) throw new Error(`Connection not found: ${connectionId}`);
-      await driver.disconnect();
-      registry.delete(connectionId);
+      try {
+        await driver.disconnect();
+      } finally {
+        registry.delete(connectionId);
+      }
     },
   );
 
