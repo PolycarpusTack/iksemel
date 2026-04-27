@@ -1,5 +1,10 @@
-import { app, BrowserWindow } from "electron";
+// electron/main/index.ts
+import { app, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
+import { registerConnectionHandlers } from "./ipc/connections";
+import { registerSchemaHandlers } from "./ipc/schema";
+import { registerStatsHandlers } from "./ipc/stats";
+import { registerFilesHandlers } from "./ipc/files";
 
 function createWindow(): void {
   const win = new BrowserWindow({
@@ -29,6 +34,12 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  // Register all IPC handlers before creating the window
+  registerConnectionHandlers(ipcMain);
+  registerSchemaHandlers(ipcMain);
+  registerStatsHandlers(ipcMain);
+  registerFilesHandlers(ipcMain);
+
   createWindow();
 
   app.on("activate", () => {
