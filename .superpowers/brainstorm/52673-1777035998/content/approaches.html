@@ -1,0 +1,50 @@
+<h2>Three approaches to Electron + Database integration</h2>
+<p class="subtitle">Pick the architecture before we design the details</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>electron-vite + Context Bridge <span style="font-size:0.75em;color:#4ade80;font-weight:600">— Recommended</span></h3>
+      <p>Use <strong>electron-vite</strong> as the build tool (minimal changes to existing Vite config). Main process manages all DB connections. A <strong>context bridge</strong> exposes a typed <code>window.electronAPI</code> to the renderer — the only way the renderer talks to Node.js. electron-builder handles packaging, installers, and auto-updates.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-size:0.8em;font-family:monospace;color:#94a3b8">
+        Renderer (React) → window.electronAPI → Preload (context bridge) → IPC → Main process → pg / oracledb
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Industry standard Electron pattern</li><li>Secure — renderer never touches Node directly</li><li>Hot reload works in dev</li><li>Existing Vite config mostly unchanged</li><li>electron-builder handles Windows + macOS packaging</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Adds electron-vite as a new build dependency</li><li>Oracle Instant Client must be installed separately</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Local HTTP sidecar</h3>
+      <p>Main process spawns a local <strong>Express/Fastify server</strong> on a random port. Renderer calls <code>http://localhost:PORT</code> for all DB operations — essentially treating the main process as a mini backend. Packaging via electron-builder.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-size:0.8em;font-family:monospace;color:#94a3b8">
+        Renderer (React) → fetch(localhost:PORT) → Express → pg / oracledb
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Renderer code is familiar REST-style</li><li>Could reuse same backend for a future web version</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Open local port is a security surface</li><li>Port conflicts possible</li><li>Extra HTTP overhead vs direct IPC</li><li>Unnecessary complexity for a desktop app</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Electron Forge + Vite plugin</h3>
+      <p>Use <strong>Electron Forge</strong> for the full lifecycle: scaffolding, packaging, publishing, and auto-updates. Vite is added as a plugin. More opinionated structure than electron-vite but more batteries-included for distribution workflows.</p>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;font-size:0.8em;font-family:monospace;color:#94a3b8">
+        Renderer (React) → context bridge → IPC → Main process → pg / oracledb<br>
+        <span style="color:#64748b">+ Forge handles publishing to GitHub Releases, Squirrel auto-update, etc.</span>
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Best-in-class distribution tooling</li><li>Built-in auto-update via Squirrel</li><li>GitHub Releases publishing out of the box</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Larger migration — Forge wants to own the project structure</li><li>Steeper learning curve</li><li>Overkill if distribution is manual/internal for now</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

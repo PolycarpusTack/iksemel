@@ -1,0 +1,120 @@
+<h2>Section 2 — IPC API (<code>window.electronAPI</code>)</h2>
+<p class="subtitle">The full typed surface the renderer can call. Grouped by concern — each group maps to one IPC handler module in main.</p>
+
+<div style="display:grid;gap:14px">
+
+  <!-- Connections -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(74,222,128,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#4ade80;text-transform:uppercase;border-bottom:1px solid rgba(74,222,128,0.15)">
+      🔌 connections — profile management &amp; live sessions
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        <span style="color:#94a3b8">// test without saving</span><br>
+        testConnection(profile) → TestResult
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        <span style="color:#94a3b8">// open a pooled connection</span><br>
+        connect(profileId) → ConnectionResult
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        disconnect(connectionId) → void
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        listProfiles() → ConnectionProfile[]
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        saveProfile(profile) → ConnectionProfile
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        deleteProfile(profileId) → void
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        setFavourite(profileId, bool) → void
+      </div>
+    </div>
+  </div>
+
+  <!-- Schema introspection -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(129,140,248,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#818cf8;text-transform:uppercase;border-bottom:1px solid rgba(129,140,248,0.15)">
+      🗂 schema — introspect DB structure
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        <span style="color:#94a3b8">// tables + views</span><br>
+        getTables(connectionId) → TableInfo[]
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        getColumns(connectionId, tableId)<br>→ ColumnInfo[]
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        getForeignKeys(connectionId)<br>→ ForeignKeyRelation[]
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        <span style="color:#94a3b8">// builds SchemaNode[] for the app</span><br>
+        buildSchemaTree(connectionId, options)<br>→ SchemaNode[]
+      </div>
+    </div>
+    <div style="padding:0 14px 14px;font-size:0.8em;color:#94a3b8">
+      <strong style="color:#cbd5e1">buildSchemaTree options:</strong> which FK relationships to nest (the user-choice from Section 5), whether to include views, schema/owner filter for Oracle.
+    </div>
+  </div>
+
+  <!-- Statistics -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(251,191,36,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#fbbf24;text-transform:uppercase;border-bottom:1px solid rgba(251,191,36,0.15)">
+      📊 stats — feeds the size estimator (replaces synthetic estimates)
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        fetchSampleStats(connectionId, columns)<br>→ FieldSampleData[]
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        fetchCardinality(connectionId, tableId)<br>→ CardinalityStats
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        getRowCount(connectionId, tableId)<br>→ number
+      </div>
+    </div>
+    <div style="padding:0 14px 14px;font-size:0.8em;color:#94a3b8">
+      These map directly onto the existing <code style="color:#cbd5e1">DataProvider</code> interface — a new <code style="color:#cbd5e1">DatabaseProvider</code> class implements it using these IPC calls. The estimation hook needs no changes.
+    </div>
+  </div>
+
+  <!-- File system -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(56,189,248,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#38bdf8;text-transform:uppercase;border-bottom:1px solid rgba(56,189,248,0.15)">
+      📁 files — native save dialogs &amp; package output
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        chooseOutputDir() → string | null
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        savePackage(files, outputDir)<br>→ SaveResult
+      </div>
+    </div>
+    <div style="padding:0 14px 14px;font-size:0.8em;color:#94a3b8">
+      <code style="color:#cbd5e1">chooseOutputDir()</code> opens a native OS folder picker. In the web build, the existing JSZip download still works unchanged.
+    </div>
+  </div>
+
+  <!-- Updates -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(255,255,255,0.04);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.08)">
+      🔄 updates — auto-updater events (main → renderer)
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        onUpdateAvailable(cb) → void
+      </div>
+      <div style="font-family:monospace;font-size:0.78em;padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;color:#e2e8f0">
+        installUpdate() → void
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-size:0.85em;color:#94a3b8;text-align:center;margin-top:16px">Does this API surface look complete? Reply in terminal to continue to Section 3 (DB layer + Oracle edge cases).</p>

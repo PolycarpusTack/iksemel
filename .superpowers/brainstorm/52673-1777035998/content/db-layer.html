@@ -1,0 +1,116 @@
+<h2>Section 3 — Database Layer &amp; Edge Cases</h2>
+<p class="subtitle">PostgreSQL is straightforward. Oracle has significant edge cases that need explicit handling.</p>
+
+<div style="display:grid;gap:14px">
+
+  <!-- PostgreSQL -->
+  <div style="border:1px solid rgba(56,189,248,0.3);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(56,189,248,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#38bdf8;text-transform:uppercase;border-bottom:1px solid rgba(56,189,248,0.15)">
+      🐘 PostgreSQL — <code>pg</code> driver (pure JS, no native deps)
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:0.78em;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:6px">Connection inputs</div>
+        <div style="font-size:0.82em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Host, port (default 5432), database</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Username + password (keychain-stored)</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">SSL mode: disable / require / verify-full</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Optional: custom CA certificate path</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Schema filter (default: public)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.78em;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:6px">Edge cases</div>
+        <div style="font-size:0.82em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:5px 8px;background:rgba(255,165,0,0.08);border-radius:4px;border-left:3px solid #f97316">Self-signed SSL certs common in enterprise — <code>rejectUnauthorized: false</code> toggle needed</div>
+          <div style="padding:5px 8px;background:rgba(255,165,0,0.08);border-radius:4px;border-left:3px solid #f97316">Multiple schemas per DB — user picks which schema(s) to introspect</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Connection pooling via <code>pg.Pool</code> — idle timeout 30s, max 3 connections</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oracle -->
+  <div style="border:1px solid rgba(251,146,60,0.3);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(251,146,60,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#fb923c;text-transform:uppercase;border-bottom:1px solid rgba(251,146,60,0.15)">
+      🔶 Oracle — <code>oracledb</code> driver (native bindings required)
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:0.78em;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:6px">Connection inputs</div>
+        <div style="font-size:0.82em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Easy Connect string: <code>host:port/service</code></div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">TNS alias (reads local tnsnames.ora)</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Username + password (keychain-stored)</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Wallet directory path (for TLS/mTLS)</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Schema/owner filter</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.78em;font-weight:600;color:#f97316;text-transform:uppercase;margin-bottom:6px">⚠️ Critical edge cases</div>
+        <div style="font-size:0.82em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:5px 8px;background:rgba(239,68,68,0.1);border-radius:4px;border-left:3px solid #ef4444"><strong>Oracle Instant Client</strong> must be installed. App detects on startup and shows a clear install guide if missing — not a silent crash.</div>
+          <div style="padding:5px 8px;background:rgba(255,165,0,0.08);border-radius:4px;border-left:3px solid #f97316">Identifiers stored UPPERCASE unless quoted — normalise to lowercase in SchemaNode names</div>
+          <div style="padding:5px 8px;background:rgba(255,165,0,0.08);border-radius:4px;border-left:3px solid #f97316">Oracle DATE includes time component — map to <code>xs:dateTime</code>, not <code>xs:date</code></div>
+          <div style="padding:5px 8px;background:rgba(255,165,0,0.08);border-radius:4px;border-left:3px solid #f97316">NUMBER with no precision = float — map to <code>xs:decimal</code></div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Exclude system schemas: SYS, SYSTEM, MDSYS, CTXSYS, XDB, APEX_* etc.</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Synonyms — resolve to base table for introspection</div>
+          <div style="padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:4px">CLOB/BLOB columns — excluded from schema tree (not serialisable to XML)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared edge cases -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(255,255,255,0.05);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#94a3b8;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.08)">
+      ⚡ Schema mapping edge cases — both engines
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="padding:8px 10px;background:rgba(239,68,68,0.08);border-radius:5px;border-left:3px solid #ef4444;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#f87171">Circular FKs</strong> (A→B, B→A) — detect cycles during tree build, break at the deepest edge. Show warning in UI.
+      </div>
+      <div style="padding:8px 10px;background:rgba(239,68,68,0.08);border-radius:5px;border-left:3px solid #ef4444;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#f87171">Self-referential FKs</strong> (e.g. category → parent_category_id) — render as optional recursive child element, max depth capped at 3.
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,165,0,0.08);border-radius:5px;border-left:3px solid #f97316;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#fbbf24">Composite FK keys</strong> — FK relationships spanning multiple columns shown as flat, not nested (nesting multi-key FKs produces ambiguous XML).
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,165,0,0.08);border-radius:5px;border-left:3px solid #f97316;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#fbbf24">Very wide tables</strong> (500+ columns) — introspect in batches, show progress indicator. Columns still loaded fully.
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#e2e8f0">NULL / NOT NULL</strong> → <code>minOccurs="0"</code> vs <code>minOccurs="1"</code> in schema nodes.
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#e2e8f0">Reserved XML names</strong> (e.g. column named "xml", "xsl") — prefix with table name to avoid invalid element names.
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#e2e8f0">Views</strong> — included with a "view" badge. No FK introspection for views (no FK metadata). Flat columns only.
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:0.82em;color:#cbd5e1">
+        <strong style="color:#e2e8f0">DB type → XSD type</strong> — full mapping table (VARCHAR→xs:string, INT→xs:integer, DATE→xs:date, TIMESTAMP→xs:dateTime, NUMERIC→xs:decimal, BOOLEAN→xs:boolean, etc.)
+      </div>
+    </div>
+  </div>
+
+  <!-- Credential storage -->
+  <div style="border:1px solid rgba(129,140,248,0.3);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(129,140,248,0.08);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#818cf8;text-transform:uppercase;border-bottom:1px solid rgba(129,140,248,0.15)">
+      🔑 Credential storage
+    </div>
+    <div style="padding:14px;font-size:0.82em;color:#cbd5e1;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="padding:5px 10px;background:rgba(255,255,255,0.04);border-radius:4px;white-space:nowrap">Profile file <code style="font-size:0.9em">~/.xfeb/profiles.json</code></div>
+        <div style="color:#94a3b8">Stores host, port, database, username, engine, label, isFavourite — everything <strong style="color:#e2e8f0">except passwords</strong></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="padding:5px 10px;background:rgba(255,255,255,0.04);border-radius:4px;white-space:nowrap">OS Keychain (<code>keytar</code>)</div>
+        <div style="color:#94a3b8">Passwords only. Key: <code style="color:#e2e8f0">xfeb/{profileId}</code>. Windows Credential Manager on Windows, Keychain on macOS.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-size:0.85em;color:#94a3b8;text-align:center;margin-top:16px">Does this cover the DB layer completely? Reply in terminal to continue to Section 4 (schema mapping flow + FK choice UI).</p>

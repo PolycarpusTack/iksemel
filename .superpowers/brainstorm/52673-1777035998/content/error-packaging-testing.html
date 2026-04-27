@@ -1,0 +1,128 @@
+<h2>Section 6 — Error Handling, Packaging &amp; Testing</h2>
+<p class="subtitle">Every failure mode has a clear user-facing response. Packaging produces signed installers. Testing strategy keeps CI fast.</p>
+
+<div style="display:grid;gap:14px">
+
+  <!-- Error handling -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(239,68,68,0.07);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#f87171;text-transform:uppercase;border-bottom:1px solid rgba(239,68,68,0.15)">
+      ⚠️ Error handling — every failure has a clear user message
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+
+      <div style="padding:8px 10px;background:rgba(239,68,68,0.08);border-radius:5px;border-left:3px solid #ef4444">
+        <div style="font-size:0.8em;font-weight:600;color:#f87171">Oracle Instant Client missing</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Detected on startup before any connection attempt. Full-screen guide shown with download link, path instructions per OS. App remains usable for XSD/PG.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,165,0,0.07);border-radius:5px;border-left:3px solid #f97316">
+        <div style="font-size:0.8em;font-weight:600;color:#fb923c">Connection timeout</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">10s timeout with spinner. Error distinguishes: host not reachable vs host reachable but auth failed vs DB not found. Each has a specific fix hint.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,165,0,0.07);border-radius:5px;border-left:3px solid #f97316">
+        <div style="font-size:0.8em;font-weight:600;color:#fb923c">DB permissions insufficient</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">User lacks SELECT on information_schema / ALL_TABLES. Show which tables failed with the exact privilege required. Partial introspection still proceeds for accessible tables.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,165,0,0.07);border-radius:5px;border-left:3px solid #f97316">
+        <div style="font-size:0.8em;font-weight:600;color:#fb923c">Oracle TNS resolution failure</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">tnsnames.ora not found or alias not in it. Show the path where Oracle looks for it, suggest switching to Easy Connect string instead.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">Stats query timeout</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">AVG/COUNT queries on huge tables time out after 5s. Silent fallback to static estimation. MetricsBar shows <code>source: "static"</code> indicator as usual — no error shown.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">Connection lost mid-session</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Detected when next IPC call fails. Toast notification: "Lost connection to Production PG — Reconnect". Schema and selection state preserved. Reconnect re-runs just the connect step, not the full wizard.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">Large schema introspection</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Databases with 500+ tables: table list loaded lazily, columns fetched on demand (not all upfront). Progress bar shown. Stats use Oracle SAMPLE / PG TABLESAMPLE for fast approximations.</div>
+      </div>
+
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">Auto-update failure</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Update check silently fails if offline — no crash, no intrusive dialog. Update available notification is a dismissable toast only, never blocking.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Packaging -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(74,222,128,0.06);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#4ade80;text-transform:uppercase;border-bottom:1px solid rgba(74,222,128,0.12)">
+      📦 Packaging — electron-builder
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:0.75em;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:6px">Windows</div>
+        <div style="font-size:0.8em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">NSIS installer (.exe)</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Portable zip option</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Code-signed with EV cert</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">electron-updater via GitHub Releases</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px;color:#94a3b8;font-size:0.9em">oracledb + keytar rebuilt for Electron's Node via electron-rebuild</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.75em;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:6px">macOS</div>
+        <div style="font-size:0.8em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">.dmg (drag-to-Applications)</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Universal binary (Intel + Apple Silicon)</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Notarized (required by Gatekeeper)</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">electron-updater via GitHub Releases</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px;color:#94a3b8;font-size:0.9em">macOS build requires macOS runner — GitHub Actions matrix</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.75em;font-weight:600;color:#f97316;text-transform:uppercase;margin-bottom:6px">Oracle Instant Client</div>
+        <div style="font-size:0.8em;color:#cbd5e1;display:flex;flex-direction:column;gap:4px">
+          <div style="padding:4px 8px;background:rgba(239,68,68,0.08);border-radius:4px;border-left:2px solid #ef4444">NOT bundled — Oracle license prohibits redistribution</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">App detects presence on launch</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">Shows one-time install wizard with direct Oracle download link</div>
+          <div style="padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:4px">User's system path to Instant Client saved in settings</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testing -->
+  <div style="border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(56,189,248,0.06);padding:10px 16px;font-size:0.8em;font-weight:600;letter-spacing:0.05em;color:#38bdf8;text-transform:uppercase;border-bottom:1px solid rgba(56,189,248,0.12)">
+      🧪 Testing strategy
+    </div>
+    <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="padding:8px 10px;background:rgba(74,222,128,0.06);border-radius:5px;border-left:3px solid #4ade80">
+        <div style="font-size:0.8em;font-weight:600;color:#4ade80">Existing 568 Vitest tests — unchanged</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">All run against the web build. The renderer React code has no Electron dependency — tests continue to work exactly as today.</div>
+      </div>
+      <div style="padding:8px 10px;background:rgba(74,222,128,0.06);border-radius:5px;border-left:3px solid #4ade80">
+        <div style="font-size:0.8em;font-weight:600;color:#4ade80">Unit tests — schema mapping</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Pure functions: DB type → XSD type mapping, FK cycle detection, self-ref depth capping, column name sanitisation, composite FK auto-flattening. All Vitest, no DB needed.</div>
+      </div>
+      <div style="padding:8px 10px;background:rgba(251,191,36,0.06);border-radius:5px;border-left:3px solid #fbbf24">
+        <div style="font-size:0.8em;font-weight:600;color:#fbbf24">Integration tests — PostgreSQL</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Docker Postgres container in CI. Tests cover: connect, getTables, getColumns, getForeignKeys, buildSchemaTree, fetchSampleStats. Fast — container spins up in ~5s.</div>
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">Integration tests — Oracle</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Skipped in CI (Oracle Docker image is 2GB+, requires license). Run locally against a real Oracle instance. CI tests the Oracle code path with mocked responses only.</div>
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">IPC handler tests</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Main process IPC handlers tested in isolation (Node.js, no Electron binary needed). DB driver mocked. Covers all error paths — timeout, auth failure, permission error, etc.</div>
+      </div>
+      <div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:5px">
+        <div style="font-size:0.8em;font-weight:600;color:#e2e8f0">E2E — Playwright (Electron driver)</div>
+        <div style="font-size:0.77em;color:#94a3b8;margin-top:3px">Playwright can drive Electron apps via <code>_electron</code> API. Smoke tests: app launches, XSD upload works, DB tab visible, connection dialog opens. Runs against the packaged app in CI.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-size:0.85em;color:#94a3b8;text-align:center;margin-top:16px">This is the final design section. Reply in terminal to confirm the full design so I can write the spec document.</p>

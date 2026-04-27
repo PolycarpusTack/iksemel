@@ -1,0 +1,152 @@
+<h2>Section 4 — Schema Mapping Flow &amp; FK Choice UI</h2>
+<p class="subtitle">A two-step wizard: pick tables, then configure FK nesting. Replaces the XSD upload for DB-sourced schemas.</p>
+
+<!-- Flow diagram -->
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.08)">
+  <div style="padding:8px 14px;border:1px solid rgba(74,222,128,0.4);border-radius:6px;font-size:0.82em;background:rgba(74,222,128,0.06);text-align:center">
+    1. Connect<br><span style="color:#94a3b8;font-size:0.85em">choose profile</span>
+  </div>
+  <div style="color:#64748b">→</div>
+  <div style="padding:8px 14px;border:1px solid rgba(129,140,248,0.4);border-radius:6px;font-size:0.82em;background:rgba(129,140,248,0.06);text-align:center">
+    2. Select tables<br><span style="color:#94a3b8;font-size:0.85em">include/exclude</span>
+  </div>
+  <div style="color:#64748b">→</div>
+  <div style="padding:8px 14px;border:1px solid rgba(251,191,36,0.4);border-radius:6px;font-size:0.82em;background:rgba(251,191,36,0.06);text-align:center">
+    3. Configure FKs<br><span style="color:#94a3b8;font-size:0.85em">nest or flat</span>
+  </div>
+  <div style="color:#64748b">→</div>
+  <div style="padding:8px 14px;border:1px solid rgba(56,189,248,0.4);border-radius:6px;font-size:0.82em;background:rgba(56,189,248,0.06);text-align:center">
+    4. Build schema<br><span style="color:#94a3b8;font-size:0.85em">SchemaNode[] ready</span>
+  </div>
+  <div style="color:#64748b">→</div>
+  <div style="padding:8px 14px;border:1px solid rgba(74,222,128,0.4);border-radius:6px;font-size:0.82em;background:rgba(74,222,128,0.06);text-align:center">
+    App loads<br><span style="color:#94a3b8;font-size:0.85em">same as XSD load</span>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+  <!-- Step 2: Table selection mockup -->
+  <div>
+    <div style="font-size:0.78em;font-weight:600;color:#818cf8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Step 2 — Table selection</div>
+    <div class="mockup">
+      <div class="mockup-header">Select tables to include (23 found)</div>
+      <div class="mockup-body" style="padding:10px;display:flex;flex-direction:column;gap:6px">
+        <input class="mock-input" placeholder="🔍 Filter tables..." style="margin-bottom:4px">
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <span style="font-size:0.75em;padding:3px 8px;background:rgba(129,140,248,0.15);border-radius:4px;color:#818cf8;cursor:pointer">All</span>
+          <span style="font-size:0.75em;padding:3px 8px;background:rgba(255,255,255,0.06);border-radius:4px;color:#94a3b8;cursor:pointer">Tables</span>
+          <span style="font-size:0.75em;padding:3px 8px;background:rgba(255,255,255,0.06);border-radius:4px;color:#94a3b8;cursor:pointer">Views</span>
+        </div>
+        <!-- Table rows -->
+        <div style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto">
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(74,222,128,0.06);border-radius:4px;border:1px solid rgba(74,222,128,0.2)">
+            <input type="checkbox" checked style="accent-color:#4ade80">
+            <span style="font-size:0.82em;font-family:monospace;flex:1">PROGRAMME</span>
+            <span style="font-size:0.72em;color:#94a3b8">42 cols · 850k rows</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(74,222,128,0.06);border-radius:4px;border:1px solid rgba(74,222,128,0.2)">
+            <input type="checkbox" checked style="accent-color:#4ade80">
+            <span style="font-size:0.82em;font-family:monospace;flex:1">EPISODE</span>
+            <span style="font-size:0.72em;color:#94a3b8">28 cols · 3.2M rows</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(74,222,128,0.06);border-radius:4px;border:1px solid rgba(74,222,128,0.2)">
+            <input type="checkbox" checked style="accent-color:#4ade80">
+            <span style="font-size:0.82em;font-family:monospace;flex:1">CHANNEL</span>
+            <span style="font-size:0.72em;color:#94a3b8">15 cols · 240 rows</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.03);border-radius:4px">
+            <input type="checkbox" style="accent-color:#4ade80">
+            <span style="font-size:0.82em;font-family:monospace;flex:1;color:#64748b">AUDIT_LOG</span>
+            <span style="font-size:0.72em;color:#64748b">8 cols · 12M rows</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.03);border-radius:4px">
+            <input type="checkbox" style="accent-color:#4ade80">
+            <span style="font-size:0.82em;font-family:monospace;flex:1;color:#64748b">SYS_CONFIG</span>
+            <span style="font-size:0.72em;color:#64748b">5 cols · 1 row</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(56,189,248,0.04);border-radius:4px;border:1px solid rgba(56,189,248,0.15)">
+            <input type="checkbox" checked style="accent-color:#38bdf8">
+            <span style="font-size:0.82em;font-family:monospace;flex:1">V_SCHEDULE <span style="font-size:0.8em;color:#38bdf8">VIEW</span></span>
+            <span style="font-size:0.72em;color:#94a3b8">22 cols</span>
+          </div>
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.75em;color:#94a3b8">4 of 23 selected</span>
+          <button class="mock-button" style="font-size:0.78em">Next: Configure FKs →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: FK configuration mockup -->
+  <div>
+    <div style="font-size:0.78em;font-weight:600;color:#fbbf24;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Step 3 — FK relationship configuration</div>
+    <div class="mockup">
+      <div class="mockup-header">Configure foreign key relationships (6 found)</div>
+      <div class="mockup-body" style="padding:10px;display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:0.75em;color:#94a3b8;margin-bottom:4px">Choose whether each FK creates a nested child element or stays as a flat ID column.</div>
+
+        <!-- FK row: NEST -->
+        <div style="padding:8px 10px;background:rgba(74,222,128,0.06);border-radius:6px;border:1px solid rgba(74,222,128,0.2)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);flex-shrink:0">
+              <span style="padding:3px 8px;background:#4ade8022;font-size:0.72em;color:#4ade80;font-weight:600;border-right:1px solid rgba(255,255,255,0.1)">NEST</span>
+              <span style="padding:3px 8px;font-size:0.72em;color:#64748b;cursor:pointer">FLAT</span>
+            </div>
+            <div style="font-size:0.8em;font-family:monospace;flex:1">EPISODE.programme_id → PROGRAMME</div>
+          </div>
+          <div style="font-size:0.72em;color:#94a3b8;margin-top:4px;margin-left:68px">Programme data nested inside each Episode element</div>
+        </div>
+
+        <!-- FK row: FLAT -->
+        <div style="padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);flex-shrink:0">
+              <span style="padding:3px 8px;font-size:0.72em;color:#64748b;cursor:pointer;border-right:1px solid rgba(255,255,255,0.1)">NEST</span>
+              <span style="padding:3px 8px;background:#94a3b822;font-size:0.72em;color:#94a3b8;font-weight:600">FLAT</span>
+            </div>
+            <div style="font-size:0.8em;font-family:monospace;flex:1">PROGRAMME.channel_id → CHANNEL</div>
+          </div>
+          <div style="font-size:0.72em;color:#94a3b8;margin-top:4px;margin-left:68px">channel_id stays as a plain ID column</div>
+        </div>
+
+        <!-- FK row: CIRCULAR WARNING -->
+        <div style="padding:8px 10px;background:rgba(239,68,68,0.06);border-radius:6px;border:1px solid rgba(239,68,68,0.25)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;opacity:0.5">
+              <span style="padding:3px 8px;font-size:0.72em;color:#64748b;border-right:1px solid rgba(255,255,255,0.1)">NEST</span>
+              <span style="padding:3px 8px;font-size:0.72em;color:#64748b">FLAT</span>
+            </div>
+            <div style="font-size:0.8em;font-family:monospace;flex:1;color:#94a3b8">PROGRAMME.series_id → SERIES ↔ SERIES.lead_programme_id</div>
+            <span style="font-size:0.7em;padding:2px 6px;background:rgba(239,68,68,0.15);border-radius:3px;color:#f87171;white-space:nowrap">⚠ Circular — auto-flat</span>
+          </div>
+        </div>
+
+        <!-- FK row: SELF-REF -->
+        <div style="padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);flex-shrink:0">
+              <span style="padding:3px 8px;background:#4ade8022;font-size:0.72em;color:#4ade80;font-weight:600;border-right:1px solid rgba(255,255,255,0.1)">NEST</span>
+              <span style="padding:3px 8px;font-size:0.72em;color:#64748b;cursor:pointer">FLAT</span>
+            </div>
+            <div style="font-size:0.8em;font-family:monospace;flex:1">CATEGORY.parent_id → CATEGORY <span style="color:#818cf8;font-size:0.85em">self-ref</span></div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:0.75em;color:#94a3b8">depth <select style="background:#1e293b;border:1px solid rgba(255,255,255,0.15);border-radius:3px;color:#cbd5e1;font-size:1em;padding:1px 4px"><option>3</option></select></div>
+          </div>
+          <div style="font-size:0.72em;color:#94a3b8;margin-top:4px;margin-left:68px">Recursive nesting, max 3 levels deep</div>
+        </div>
+
+        <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+          <button class="mock-button" style="font-size:0.78em;background:transparent">← Back</button>
+          <button class="mock-button" style="font-size:0.78em">Build Schema Tree →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:14px;padding:12px 16px;background:rgba(56,189,248,0.06);border-radius:8px;border:1px solid rgba(56,189,248,0.2);font-size:0.82em;color:#cbd5e1">
+  <strong style="color:#38bdf8">After Step 4:</strong> The resulting <code>SchemaNode[]</code> is dispatched with <code>LOAD_SCHEMA</code> — identical to loading an XSD. The connection profile + FK choices are saved so the schema can be <strong>refreshed</strong> from the DB later without re-configuring.
+</div>
+
+<p style="font-size:0.85em;color:#94a3b8;text-align:center;margin-top:16px">Does this flow and FK UI look right? Reply in terminal to continue to Section 5 (Connection Manager UI — profiles + favourites).</p>
