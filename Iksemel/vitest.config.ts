@@ -21,6 +21,7 @@ export default defineConfig({
       "src/**/*.{test,spec}.{ts,tsx}",
       "electron/**/*.{test,spec}.ts",
     ],
+    environmentMatchGlobs: [["electron/**", "node"]],
     coverage: {
       provider: "v8",
       reporter: ["text", "text-summary", "lcov", "html"],
