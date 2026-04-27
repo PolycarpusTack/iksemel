@@ -179,3 +179,43 @@ describe("PgDriver SSL", () => {
     expect(poolConfig.ssl).toEqual({ rejectUnauthorized: true });
   });
 });
+
+describe("PgDriver.fetchSampleStats", () => {
+  it("returns sample stats with top values for a column", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [{}] }); // connect ping
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          total_count: "1000",
+          distinct_count: "42",
+          null_count: "5",
+          top_values: [
+            { value: "foo", count: 200 },
+            { value: "bar", count: 150 },
+          ],
+        },
+      ],
+    });
+    const driver = new PgDriver();
+    await driver.connect(profile);
+    const stats = await driver.fetchSampleStats(["public.programme.genre_id"]);
+    expect(stats).toHaveLength(1);
+    expect(stats[0].fieldId).toBe("public.programme.genre_id");
+    expect(stats[0].totalCount).toBe(1000);
+    expect(stats[0].distinctCount).toBe(42);
+    expect(stats[0].nullCount).toBe(5);
+    expect(stats[0].values).toHaveLength(2);
+    expect(stats[0].values[0]).toEqual({ value: "foo", count: 200 });
+  });
+
+  it("returns empty stats on query failure", async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [{}] }); // connect ping
+    mockQuery.mockRejectedValueOnce(new Error("permission denied"));
+    const driver = new PgDriver();
+    await driver.connect(profile);
+    const stats = await driver.fetchSampleStats(["public.programme.genre_id"]);
+    expect(stats).toHaveLength(1);
+    expect(stats[0].totalCount).toBe(0);
+    expect(stats[0].values).toHaveLength(0);
+  });
+});

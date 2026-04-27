@@ -164,15 +164,15 @@ export class PgDriver {
           `SELECT
              $3::text AS col_path,
              COUNT(*) AS total_count,
-             COUNT(DISTINCT ${column}) AS distinct_count,
-             COUNT(*) - COUNT(${column}) AS null_count,
-             json_agg(json_build_object('value', ${column}::text, 'count', cnt) ORDER BY cnt DESC)
+             COUNT(DISTINCT ${this.quoteIdent(column)}) AS distinct_count,
+             COUNT(*) - COUNT(${this.quoteIdent(column)}) AS null_count,
+             json_agg(json_build_object('value', ${this.quoteIdent(column)}::text, 'count', cnt) ORDER BY cnt DESC)
                FILTER (WHERE rn <= 20) AS top_values
            FROM (
-             SELECT ${column}, COUNT(*) AS cnt,
+             SELECT ${this.quoteIdent(column)}, COUNT(*) AS cnt,
                     ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS rn
-             FROM ${schema}.${table} TABLESAMPLE SYSTEM(10)
-             GROUP BY ${column}
+             FROM ${this.quoteIdent(schema)}.${this.quoteIdent(table)} TABLESAMPLE SYSTEM(10)
+             GROUP BY ${this.quoteIdent(column)}
            ) sub`,
           [schema, table, colPath],
         );
@@ -220,9 +220,13 @@ export class PgDriver {
     const pool = this.requirePool();
     const [schema, table] = tableId.split(".");
     const result = await pool.query(
-      `SELECT COUNT(*)::text AS count FROM ${schema}.${table}`,
+      `SELECT COUNT(*)::text AS count FROM ${this.quoteIdent(schema)}.${this.quoteIdent(table)}`,
     );
     return parseInt(result.rows[0].count, 10);
+  }
+
+  private quoteIdent(name: string): string {
+    return '"' + name.replace(/"/g, '""') + '"';
   }
 
   private requirePool(): Pool {
