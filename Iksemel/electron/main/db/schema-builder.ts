@@ -14,11 +14,6 @@ const RESERVED_XML_NAMES = new Set([
   "xml", "xsl", "xslt", "xmlns", "xlink",
 ]);
 
-let nodeCounter = 0;
-function nextId(): string {
-  return `n${nodeCounter++}`;
-}
-
 function sanitiseColumnName(colName: string, tableName: string): string {
   const lower = colName.toLowerCase();
   if (RESERVED_XML_NAMES.has(lower)) {
@@ -27,7 +22,7 @@ function sanitiseColumnName(colName: string, tableName: string): string {
   return lower;
 }
 
-function buildColumnNode(col: ColumnInfo, tableName: string, engine: DbEngine): SchemaNode | null {
+function buildColumnNode(col: ColumnInfo, tableName: string, engine: DbEngine, nextId: () => string): SchemaNode | null {
   const xsdType = mapDbTypeToXsdType(col.dbType, engine);
   if (xsdType === null) return null; // excluded type (BLOB, CLOB, etc.)
 
@@ -49,11 +44,12 @@ function buildNestedTableNode(
   table: TableInfo,
   columns: Map<string, ColumnInfo[]>,
   engine: DbEngine,
+  nextId: () => string,
 ): SchemaNode {
   const tableCols = columns.get(table.tableId) ?? [];
   const children: SchemaNode[] = [];
   for (const col of tableCols) {
-    const node = buildColumnNode(col, table.name, engine);
+    const node = buildColumnNode(col, table.name, engine, nextId);
     if (node) children.push(node);
   }
   return {
@@ -77,8 +73,12 @@ export function buildSchemaTree(
   options: SchemaTreeOptions,
   engine: DbEngine,
 ): SchemaNode[] {
-  nodeCounter = 0;
+  let nodeCounter = 0;
+  const nextId = (): string => `n${nodeCounter++}`;
 
+  // options.maxSelfRefDepth is intentionally not implemented yet.
+  // Self-referential FKs are always treated as circular and forced flat
+  // by the cycle detector. Depth-limited nesting is a future enhancement.
   const selectedSet = new Set(options.selectedTableIds);
 
   // Run cycle detection on the provided FKs
@@ -124,10 +124,10 @@ export function buildSchemaTree(
         const childTableId = nestDecisions.get(nestingFk.fkId)!;
         const childTable = tableMap.get(childTableId);
         if (childTable) {
-          children.push(buildNestedTableNode(childTable, columns, engine));
+          children.push(buildNestedTableNode(childTable, columns, engine, nextId));
         }
       } else {
-        const node = buildColumnNode(col, table.name, engine);
+        const node = buildColumnNode(col, table.name, engine, nextId);
         if (node) children.push(node);
       }
     }
