@@ -74,4 +74,10 @@ describe("registerFilesHandlers", () => {
     const content = fs.readFileSync(path.join(tmpDir, "filter.xml"), "utf8");
     expect(content).toBe("<filter/>");
   });
+
+  it("savePackage rejects path traversal filenames", async () => {
+    await expect(
+      ipcMain._invoke("files:savePackage", { "../../evil.txt": "pwned" }, tmpDir),
+    ).rejects.toThrow("Rejected unsafe filename");
+  });
 });

@@ -18,10 +18,14 @@ export function registerFilesHandlers(ipcMain: IpcMain): void {
   ipcMain.handle(
     "files:savePackage",
     async (_event, files: PackageFiles, outputDir: string): Promise<SaveResult> => {
-      await fs.promises.mkdir(outputDir, { recursive: true });
+      const resolvedBase = path.resolve(outputDir);
+      await fs.promises.mkdir(resolvedBase, { recursive: true });
       const savedPaths: string[] = [];
       for (const [filename, content] of Object.entries(files)) {
-        const filePath = path.join(outputDir, filename);
+        const filePath = path.resolve(resolvedBase, filename);
+        if (!filePath.startsWith(resolvedBase + path.sep)) {
+          throw new Error(`Rejected unsafe filename: ${filename}`);
+        }
         await fs.promises.writeFile(filePath, content, "utf8");
         savedPaths.push(filePath);
       }
