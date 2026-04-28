@@ -60,4 +60,12 @@ describe("WizardShell", () => {
     renderShell();
     expect(screen.getByRole("radio", { name: /XML Sample/ })).toHaveAttribute("aria-checked", "true");
   });
+
+  it("Escape on step 2 goes back to step 1", () => {
+    renderShell();
+    fireEvent.click(screen.getByRole("radio", { name: /XSD Schema/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Next/ }));
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.getByRole("radio", { name: /XSD Schema/ })).toBeInTheDocument();
+  });
 });

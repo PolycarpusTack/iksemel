@@ -67,6 +67,19 @@ export function WizardShell() {
     saveWizardState(local);
   }, [local]);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent): void {
+      if (e.key !== "Escape") return;
+      if (local.step > 1) {
+        setLocal((prev) => ({ ...prev, step: (prev.step - 1) as WizardStep }));
+      } else {
+        dispatch({ type: "SET_UI_MODE", uiMode: "expert" });
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [local.step, dispatch]);
+
   const completedSteps = new Set<WizardStep>();
   if (local.step > 1) completedSteps.add(1);
   if (local.step > 2) completedSteps.add(2);

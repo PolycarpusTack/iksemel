@@ -28,4 +28,20 @@ describe("WizardStep1DataSource", () => {
     expect(screen.getByRole("radio", { name: /XSD Schema/ })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("radio", { name: /XML Sample/ })).toHaveAttribute("aria-checked", "false");
   });
+
+  it("ArrowDown moves focus from XSD card to XML Sample card", () => {
+    render(<WizardStep1DataSource selectedSource={null} onSelect={vi.fn()} />);
+    const xsdCard = screen.getByRole("radio", { name: /XSD Schema/ });
+    xsdCard.focus();
+    fireEvent.keyDown(xsdCard, { key: "ArrowDown" });
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: /XML Sample/ }));
+  });
+
+  it("ArrowUp wraps to last card from first card", () => {
+    render(<WizardStep1DataSource selectedSource={null} onSelect={vi.fn()} />);
+    const xsdCard = screen.getByRole("radio", { name: /XSD Schema/ });
+    xsdCard.focus();
+    fireEvent.keyDown(xsdCard, { key: "ArrowUp" });
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: /XML Sample/ }));
+  });
 });
