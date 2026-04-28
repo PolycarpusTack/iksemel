@@ -1,0 +1,67 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+}
+
+.heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.card:hover {
+  border-color: var(--color-accent-green-dim);
+  background: var(--color-bg-hover);
+}
+
+.cardSelected {
+  border-color: var(--color-accent-green);
+  background: var(--color-accent-green-bg);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.cardLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.cardDetail {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.check {
+  color: var(--color-accent-green);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
