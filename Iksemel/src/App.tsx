@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/state";
 import { useBridge } from "@/bridge";
 import { parseXSD } from "@engine/parser";
+import { WizardShell, clearWizardState } from "@components/wizard";
+import { Button } from "@components/primitives/Button";
 import { canUndo as checkCanUndo, canRedo as checkCanRedo } from "@engine/selection/history";
 import type { SchemaNode, ColumnDefinition } from "@/types";
 import { selectByIds, selectRange, selectByType } from "@engine/selection";
@@ -90,6 +92,9 @@ export function App() {
   const focusedNodeId = useAppSelector((state) => state.focusedNodeId);
   const documentTemplate = useAppSelector((state) => state.documentTemplate);
 
+  const uiMode = useAppSelector((state) => state.uiMode);
+  const [showModeConfirm, setShowModeConfirm] = useState(false);
+
   const dataEstimate = useDataEstimate(schema, selection);
 
   const canUndoSelection = checkCanUndo(selectionHistory);
@@ -109,6 +114,18 @@ export function App() {
   const hasSchema = schema !== null;
   useBeforeUnloadWarning(hasSchema);
   const actions = useAppActions(dispatch);
+
+  const handleRequestModeSwitch = useCallback(() => {
+    if (uiMode === "wizard") {
+      dispatch({ type: "SET_UI_MODE", uiMode: "expert" });
+      return;
+    }
+    if (schema !== null) {
+      setShowModeConfirm(true);
+    } else {
+      dispatch({ type: "SET_UI_MODE", uiMode: "wizard" });
+    }
+  }, [uiMode, schema, dispatch]);
 
   const handleSchemaLoad = useCallback((xsdText: string) => {
     const result = parseXSD(xsdText);
@@ -402,28 +419,34 @@ export function App() {
         onSchemaLoad={handleSchemaLoad}
         onShowShortcuts={() => setShowShortcuts(true)}
         onStartTour={startTour}
+        uiMode={uiMode}
+        onRequestModeSwitch={handleRequestModeSwitch}
       />
 
-      <MainLayout
-        hasSchema={hasSchema}
-        isEmbedded={isEmbedded}
-        onSchemaLoad={handleSchemaLoad}
-      >
-        <>
-          <LeftPanel {...leftPanelViewModel} />
+      {uiMode === "wizard" ? (
+        <WizardShell />
+      ) : (
+        <MainLayout
+          hasSchema={hasSchema}
+          isEmbedded={isEmbedded}
+          onSchemaLoad={handleSchemaLoad}
+        >
+          <>
+            <LeftPanel {...leftPanelViewModel} />
 
-          <ResizeHandle
-            className={styles["resizeHandle"] ?? ""}
-            minWidth={LEFT_PANEL_MIN}
-            maxWidth={LEFT_PANEL_MAX}
-            width={resizablePanel.panelWidth}
-            onMouseDown={(event) => resizablePanel.handleResizeStart(event)}
-            onKeyDown={(event) => resizablePanel.handleResizeKeyDown(event)}
-          />
+            <ResizeHandle
+              className={styles["resizeHandle"] ?? ""}
+              minWidth={LEFT_PANEL_MIN}
+              maxWidth={LEFT_PANEL_MAX}
+              width={resizablePanel.panelWidth}
+              onMouseDown={(event) => resizablePanel.handleResizeStart(event)}
+              onKeyDown={(event) => resizablePanel.handleResizeKeyDown(event)}
+            />
 
-          <RightTabs {...rightTabsViewModel} />
-        </>
-      </MainLayout>
+            <RightTabs {...rightTabsViewModel} />
+          </>
+        </MainLayout>
+      )}
 
       {showShortcuts && (
         <KeyboardShortcutOverlay onClose={() => setShowShortcuts(false)} />
@@ -443,6 +466,41 @@ export function App() {
           onCancel={handleCancelExport}
           onOptimize={handleOptimizeExport}
         />
+      )}
+
+      {showModeConfirm && (
+        <div className={styles["modalOverlay"]} role="dialog" aria-modal="true" aria-label="Switch to Guided Setup">
+          <div className={styles["modal"]}>
+            <p>You have a schema loaded. Start a new guided setup, or continue from your current configuration?</p>
+            <div className={styles["modalButtons"]}>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => {
+                  clearWizardState();
+                  dispatch({ type: "RESET" });
+                  dispatch({ type: "SET_UI_MODE", uiMode: "wizard" });
+                  setShowModeConfirm(false);
+                }}
+              >
+                Start Fresh
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  dispatch({ type: "SET_UI_MODE", uiMode: "wizard" });
+                  setShowModeConfirm(false);
+                }}
+              >
+                Continue
+              </Button>
+              <Button size="sm" onClick={() => setShowModeConfirm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showPerfPanel && (
