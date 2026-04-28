@@ -17,7 +17,7 @@ export function WizardStep2LoadData({ source, onLoaded }: WizardStep2LoadDataPro
       setError(null);
       const result = source === "xsd" ? parseXSD(rawText) : parseXmlSample(rawText);
       if (result.roots.length === 0 && result.warnings.length > 0) {
-        setError(result.warnings[0].message);
+        setError(result.warnings[0]?.message ?? "Parse error");
         return;
       }
       onLoaded(result.roots, result.warnings);

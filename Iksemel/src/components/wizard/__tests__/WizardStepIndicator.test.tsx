@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { WizardStepIndicator } from "../WizardStepIndicator";
 
-const STEPS = ["Data Source", "Load Data", "Business Object"] as const;
 
 describe("WizardStepIndicator", () => {
   it("renders all three step labels", () => {
