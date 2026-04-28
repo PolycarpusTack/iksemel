@@ -1,0 +1,86 @@
+.indicator {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.connector {
+  width: 3rem;
+  height: 2px;
+  background: var(--color-border-primary);
+  margin-top: 0.9rem;
+  flex-shrink: 0;
+}
+
+.connectorDone {
+  background: var(--color-accent-green);
+}
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bubble {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.bubbleActive {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+  color: var(--color-bg-primary);
+  cursor: default;
+}
+
+.bubbleCompleted {
+  background: var(--color-accent-green-dim);
+  border-color: var(--color-accent-green-dim);
+  color: var(--color-bg-primary);
+  cursor: pointer;
+}
+
+.bubbleCompleted:hover {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+}
+
+.bubbleLocked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.labelActive {
+  color: var(--color-accent-green);
+  font-weight: 600;
+}
+
+.labelLocked {
+  color: var(--color-text-ghost);
+}
