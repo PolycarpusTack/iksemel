@@ -1,0 +1,19 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 2rem;
+}
+
+.heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.error {
+  color: var(--color-accent-red);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
