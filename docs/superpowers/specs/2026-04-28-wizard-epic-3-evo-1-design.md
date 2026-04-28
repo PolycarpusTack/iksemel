@@ -26,14 +26,13 @@ One new field:
 readonly uiMode: "expert" | "wizard";  // default: "expert"
 ```
 
-Two new actions:
+One new action:
 
 ```ts
 | { readonly type: "SET_UI_MODE"; readonly uiMode: "expert" | "wizard" }
-| { readonly type: "RESET_STATE" }
 ```
 
-`RESET_STATE` returns `{ ...INITIAL_STATE, uiMode: "wizard" }` — resets schema, selection, rowSource, columns, and all derived state while keeping the app in wizard mode.
+`RESET` already exists in the reducer (`{ type: "RESET" }`) and returns `{ ...INITIAL_STATE }`. "Start Fresh" dispatches `RESET` then `SET_UI_MODE("wizard")` in sequence.
 
 `saveSession` and `restoreSession` include `uiMode` so the mode persists across page reloads.
 
@@ -74,7 +73,7 @@ All wizard components live under `src/components/wizard/`.
 | Step | Action dispatched | Condition to advance |
 |------|-------------------|----------------------|
 | 1 — Data Source | none (sets `wizardLocal.selectedSource`) | A source is selected |
-| 2 — Load Data | `SET_SCHEMA` (existing action) | Schema parsed successfully |
+| 2 — Load Data | `LOAD_SCHEMA` (existing action) | Schema parsed successfully |
 | 3 — Business Object | `SET_ROW_SOURCE` (existing action) | A candidate is selected |
 | Finish | `SET_UI_MODE("expert")` + `SET_ACTIVE_TAB("design")` | Step 3 complete |
 
@@ -87,7 +86,7 @@ All wizard components live under `src/components/wizard/`.
 A toggle button labelled **"Guided Setup"** (when in expert mode) / **"Expert Mode"** (when in wizard mode) sits on the right side of the existing `AppHeader`.
 
 **Expert → Wizard switch:** If `state.schema !== null`, a confirmation modal appears with two options:
-- **"Start Fresh"** — dispatches `RESET_STATE`, clears `localStorage["iksemel-wizard"]`, then `SET_UI_MODE("wizard")`
+- **"Start Fresh"** — dispatches `RESET`, clears `localStorage["iksemel-wizard"]`, then `SET_UI_MODE("wizard")`
 - **"Continue"** — dispatches `SET_UI_MODE("wizard")`; `WizardShell` on mount reads AppState to fast-forward to the furthest satisfied step
 
 If `state.schema === null`, switches directly without confirmation.
@@ -131,7 +130,7 @@ Renders the existing `<SchemaUpload>` component unchanged. `SchemaUpload` calls 
 - If `wizardLocal.selectedSource === "xsd"`: calls `parseXSD(rawText)` → `SchemaNode[]`
 - If `wizardLocal.selectedSource === "xml-sample"`: calls the inference builder → `SchemaNode[]`
 
-On success, dispatches `SET_SCHEMA(nodes)` and advances the wizard to step 3. On parse error, displays the error inline (same error display pattern as the expert UI).
+On success, dispatches `LOAD_SCHEMA` (`{ type: "LOAD_SCHEMA", roots, warnings }`) and advances the wizard to step 3. On parse error, displays the error inline (same error display pattern as the expert UI).
 
 No changes to `SchemaUpload` required.
 
