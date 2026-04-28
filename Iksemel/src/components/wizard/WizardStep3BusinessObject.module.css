@@ -1,0 +1,121 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+}
+
+.heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.sub {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.layout {
+  display: flex;
+  gap: 0.75rem;
+  min-height: 200px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.1s, background 0.1s;
+}
+
+.item:hover {
+  border-color: var(--color-accent-green-dim);
+  background: var(--color-bg-hover);
+}
+
+.itemSelected {
+  border-color: var(--color-accent-green);
+  background: var(--color-accent-green-bg);
+}
+
+.itemName {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.itemCount {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.preview {
+  flex: 1;
+  background: var(--color-bg-tertiary);
+  border-radius: 5px;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+
+.previewTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent-green);
+  margin: 0 0 0.5rem;
+}
+
+.previewEmpty {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.fieldList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fieldItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.75rem;
+}
+
+.fieldName {
+  color: var(--color-text-secondary);
+}
+
+.fieldType {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 2rem;
+}
