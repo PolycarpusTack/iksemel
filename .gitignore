@@ -69,5 +69,5 @@ Thumbs.db
 .gradle/
 .mypy_cache/
 .pytest_cache/
-```.superpowers/
+.superpowers/
 .worktrees/
