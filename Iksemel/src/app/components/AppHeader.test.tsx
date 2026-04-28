@@ -14,6 +14,8 @@ describe("AppHeader", () => {
         onSendPackageReady={onSendPackageReady}
         onSchemaLoad={() => {}}
         onShowShortcuts={() => {}}
+        uiMode="expert"
+        onRequestModeSwitch={() => {}}
       />,
     );
 
@@ -30,6 +32,8 @@ describe("AppHeader", () => {
         onSendPackageReady={() => {}}
         onSchemaLoad={() => {}}
         onShowShortcuts={() => {}}
+        uiMode="expert"
+        onRequestModeSwitch={() => {}}
       />,
     );
 
@@ -47,10 +51,62 @@ describe("AppHeader", () => {
         onSendPackageReady={() => {}}
         onSchemaLoad={() => {}}
         onShowShortcuts={onShowShortcuts}
+        uiMode="expert"
+        onRequestModeSwitch={() => {}}
       />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /Keyboard shortcuts/i }));
     expect(onShowShortcuts).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows Guided Setup button when in expert mode", () => {
+    render(
+      <AppHeader
+        isEmbedded={false}
+        hasSchema={false}
+        hasPolicyErrors={false}
+        onSendPackageReady={() => {}}
+        onSchemaLoad={() => {}}
+        onShowShortcuts={() => {}}
+        uiMode="expert"
+        onRequestModeSwitch={() => {}}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /Guided Setup/ })).toBeInTheDocument();
+  });
+
+  it("shows Expert Mode button when in wizard mode", () => {
+    render(
+      <AppHeader
+        isEmbedded={false}
+        hasSchema={false}
+        hasPolicyErrors={false}
+        onSendPackageReady={() => {}}
+        onSchemaLoad={() => {}}
+        onShowShortcuts={() => {}}
+        uiMode="wizard"
+        onRequestModeSwitch={() => {}}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /Expert Mode/ })).toBeInTheDocument();
+  });
+
+  it("fires onRequestModeSwitch when toggle button is clicked", () => {
+    const onRequestModeSwitch = vi.fn();
+    render(
+      <AppHeader
+        isEmbedded={false}
+        hasSchema={false}
+        hasPolicyErrors={false}
+        onSendPackageReady={() => {}}
+        onSchemaLoad={() => {}}
+        onShowShortcuts={() => {}}
+        uiMode="expert"
+        onRequestModeSwitch={onRequestModeSwitch}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Guided Setup/ }));
+    expect(onRequestModeSwitch).toHaveBeenCalledTimes(1);
   });
 });

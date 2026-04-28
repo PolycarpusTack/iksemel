@@ -13,6 +13,8 @@ interface AppHeaderProps {
   readonly onSchemaLoad: (xsdText: string) => void;
   readonly onShowShortcuts: () => void;
   readonly onStartTour?: () => void;
+  readonly uiMode: "expert" | "wizard";
+  readonly onRequestModeSwitch: () => void;
 }
 
 export function AppHeader(props: AppHeaderProps) {
@@ -24,6 +26,8 @@ export function AppHeader(props: AppHeaderProps) {
     onSchemaLoad,
     onShowShortcuts,
     onStartTour,
+    uiMode,
+    onRequestModeSwitch,
   } = props;
 
   return (
@@ -51,6 +55,9 @@ export function AppHeader(props: AppHeaderProps) {
           Tour
         </Button>
       )}
+      <Button size="sm" variant="ghost" onClick={onRequestModeSwitch}>
+        {uiMode === "expert" ? "Guided Setup" : "Expert Mode"}
+      </Button>
       <Button size="sm" variant="ghost" onClick={onShowShortcuts} aria-label="Keyboard shortcuts (Shift+?)">
         ?
       </Button>
