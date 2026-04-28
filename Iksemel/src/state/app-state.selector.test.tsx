@@ -34,4 +34,33 @@ describe("useAppSelector", () => {
     expect(result.current.activeTab).toBe("xslt");
     expect(result.current.renders).toBe(2);
   });
+
+  it("defaults uiMode to expert", () => {
+    const { result } = renderHook(
+      () => useAppSelector((s) => s.uiMode),
+      { wrapper },
+    );
+    expect(result.current).toBe("expert");
+  });
+
+  it("SET_UI_MODE switches between modes", () => {
+    const { result } = renderHook(
+      () => {
+        const uiMode = useAppSelector((s) => s.uiMode);
+        const dispatch = useAppDispatch();
+        return { uiMode, dispatch };
+      },
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.dispatch({ type: "SET_UI_MODE", uiMode: "wizard" });
+    });
+    expect(result.current.uiMode).toBe("wizard");
+
+    act(() => {
+      result.current.dispatch({ type: "SET_UI_MODE", uiMode: "expert" });
+    });
+    expect(result.current.uiMode).toBe("expert");
+  });
 });

@@ -111,6 +111,7 @@ export interface AppState {
 
   // UI
   readonly activeTab: "design" | "xslt" | "filter" | "filters" | "report" | "package" | "templates" | "history" | "compare" | "guide";
+  readonly uiMode: "expert" | "wizard";
   readonly searchQuery: string;
   readonly focusedNodeId: string | null;
 }
@@ -144,6 +145,7 @@ export type AppAction =
   | { readonly type: "SET_STYLE_PRESET"; readonly key: StylePresetKey }
   | { readonly type: "SET_METADATA"; readonly metadata: Partial<ReportMetadata> }
   | { readonly type: "SET_ACTIVE_TAB"; readonly tab: AppState["activeTab"] }
+  | { readonly type: "SET_UI_MODE"; readonly uiMode: "expert" | "wizard" }
   | { readonly type: "SET_SEARCH_QUERY"; readonly query: string }
   | { readonly type: "LOAD_CONFIG"; readonly format: ExportFormat; readonly columns: readonly ColumnDefinition[]; readonly rowSource: string; readonly groupBy: string | null; readonly sortBy: SortConfig | null; readonly style?: Partial<StyleConfig>; readonly metadata: Partial<ReportMetadata>; readonly filterValues?: FilterValuesState }
   | { readonly type: "APPLY_TEMPLATE"; readonly template: TemplateSpec }
@@ -237,6 +239,7 @@ export const INITIAL_STATE: AppState = {
 
   // UI
   activeTab: "design",
+  uiMode: "expert",
   searchQuery: "",
   focusedNodeId: null,
 };
@@ -427,6 +430,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case "SET_ACTIVE_TAB":
       return { ...state, activeTab: action.tab };
+
+    case "SET_UI_MODE":
+      return { ...state, uiMode: action.uiMode };
 
     case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.query };
@@ -621,6 +627,7 @@ function saveSession(state: AppState): void {
       metadata: state.metadata,
       filterValues: state.filterValues,
       activeTab: state.activeTab,
+      uiMode: state.uiMode,
       searchQuery: state.searchQuery,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
